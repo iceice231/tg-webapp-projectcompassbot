@@ -1,0 +1,44 @@
+.title {
+    font-size: 24px;
+    font-family: 'NotoSansBold';
+}
+
+.projectList__box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.projectList__wrapper {
+    padding-top: 20px;
+}
+
+.btnBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.btnAddProject {
+    background-color: #44d8ff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #fff;
+    padding: 5px 20px;
+    font-family: 'NotoSansBold';
+}
+
+.btnFilter {
+    background-color: #44d8ff;
+    border: none;
+    border-radius: 5px;
+    padding: 4px;
+
+   font-size: 25px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}

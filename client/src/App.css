@@ -1,0 +1,20 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  max-width: 384px;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #e8f2ff;
+}
+
+

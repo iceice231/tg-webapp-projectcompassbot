@@ -4,8 +4,6 @@ import {AiOutlineBars} from "react-icons/ai";
 import {MdDelete} from "react-icons/md";
 import {FaArrowDown} from "react-icons/fa";
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
-import axios from "axios";
 
 function TaskItem(props) {
 
@@ -15,17 +13,17 @@ function TaskItem(props) {
     const [isActive, setIsActive] = useState(false)
 
     useEffect(() => {
-        if(taskData.status == "Завершен") {
+        if(taskData.status === "Завершен") {
             setStatusStyle("status-completed")
-        } else if (taskData.status == "В разработке") {
+        } else if (taskData.status === "В разработке") {
             setStatusStyle("status-develop")
         } else {
             setStatusStyle("status-paused")
         }
 
-        if(taskData.priority == "Высокий"){
+        if(taskData.priority === "Высокий"){
             setIsPriorityStyle("task-priority-high")
-        } else if(taskData.priority == "Средний") {
+        } else if(taskData.priority === "Средний") {
             setIsPriorityStyle("task-priority-medium")
         } else {
             setIsPriorityStyle("task-priority-low")

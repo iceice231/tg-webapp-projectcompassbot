@@ -18,7 +18,6 @@ function ProjectList() {
   const [isClear, setIsClear] = useState(false)
   const [isModalCreateProjectOpen, setIsModalCreateProjectOpen] = useState(false);
   const [isModalFilterProjects, setIsModalFilterProjects] = useState(false);
-
   const apiUrl = process.env.REACT_APP_BASE_URL
 
   useEffect(() => {

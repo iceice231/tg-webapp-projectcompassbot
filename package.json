@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clinet": "cd client && npm run build",
-    "server": "cd server && npm run dev",
+    "server": "cd server && node server.js",
     "dev": "concurrently \"npm run clinet\" \"npm run server \""
   },
   "keywords": [],

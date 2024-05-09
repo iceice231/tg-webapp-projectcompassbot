@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clinet": "cd client && npm run start",
+    "clinet": "cd client && npm run build",
     "server": "cd server && npm run dev",
     "dev": "concurrently \"npm run clinet\" \"npm run server \""
   },

@@ -8,21 +8,17 @@ const ProjectSchema = new mongoose.Schema(
         nameProject: {
             type: String,
             require: true,
-            unique: true,
         },
         dateStart: {
             type: Date,
-            require: true,
             default: Date.now()
         },
         dateEnd: {
             type: Date,
-            require: true,
             default: Date.now()
         },
         budget: {
             type: Number,
-            require: true,
             default: 0,
         },
         responsible: {
@@ -46,6 +42,12 @@ const ProjectSchema = new mongoose.Schema(
             {
                 type:mongoose.Schema.Types.ObjectId,
                 ref: "Task"
+            }
+        ],
+        files: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "File"
             }
         ]
 

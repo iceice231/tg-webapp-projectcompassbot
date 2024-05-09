@@ -14,7 +14,7 @@ button {
   max-width: 384px;
   min-height: 100vh;
   overflow: hidden;
-  background-color: #e8f2ff;
+  background-color: rgb(245,245,245);
 }
 
 

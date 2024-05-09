@@ -5,13 +5,14 @@ const TaskSchema = new mongoose.Schema(
     {
         nameTask: {
             type: String,
-            require: true,
-            unique: true,
         },
         priority: {
             type: String,
-            require: true,
-            default: "низкий"
+            default: "Низкий"
+        },
+        status: {
+            type: String,
+            default: "В разработке"
         },
         dataStart: {
             type: Date,

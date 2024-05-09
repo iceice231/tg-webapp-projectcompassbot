@@ -30,7 +30,7 @@
     align-items: flex-start;
 }
 
-.status {
+.status-completed {
     padding: 3px 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -38,6 +38,26 @@
     font-family: 'NotoSansMedium';
     background-color: rgba(0, 175, 29, 0.987);
     color: rgb(158, 255, 176)
+}
+
+.status-develop {
+    padding: 3px 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'NotoSansMedium';
+    background-color: #ffcf6c;
+    color: #b67d00;
+}
+
+.status-paused {
+    padding: 3px 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'NotoSansMedium';
+    background-color: #f43535;
+    color: #940000;
 }
 
 .name {

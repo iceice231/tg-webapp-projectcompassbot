@@ -1,0 +1,36 @@
+.form-create-project__item {
+  width: 100%;
+  margin-top: 10px;
+  font-family: 'NotoSansRegular';
+}
+
+
+.modal-create-project__title {
+  font-size: 20px;
+  font-family: 'NotoSansBold';
+}
+
+
+.form-create-project__item-input {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid #919191;
+  &:focus {
+    width: 100%;
+    outline: none;
+    border-color: #44d8ff;
+    background-color: #fff;
+  }
+  &[type=text]{
+    width: 100%;
+    font-size: 14px;
+    font-family: 'NotoSansRegular';
+  }
+}
+
+.modal-create-project__wrapper-footer {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}

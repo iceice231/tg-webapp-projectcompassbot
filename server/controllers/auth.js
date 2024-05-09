@@ -9,21 +9,13 @@ export const JWT_SECRET = "secret"
 // Register user
 export const register = async (req, res) => {
     try {
-        const {fullName, phone, username, password, keyOrganization} = req.body;
-
+        const {fullName, email, password, keyOrganization} = req.body;
+        console.log(keyOrganization)
         // Checking for the existence of this username
-        const isUsedName = await User.findOne({username})
-        if (isUsedName) {
+        const isEmail = await User.findOne({email})
+        if (isEmail) {
             return res.status(402).json({
-                message: 'Данный логин занят'
-            })
-        }
-
-        // Checking for the existence of this phone
-        const isUsedPhone = await  User.findOne({phone})
-        if (isUsedPhone) {
-            return res.status(402).json({
-                message: 'Пользователь с данным телефон уже зарегистрирован'
+                message: 'Данная электронная почта занята'
             })
         }
 
@@ -36,8 +28,7 @@ export const register = async (req, res) => {
 
         const newUser = new User({
             fullName,
-            phone,
-            username,
+            email,
             password: hash,
             organization: organizationId._id,
         })
@@ -59,8 +50,8 @@ export const register = async (req, res) => {
 // Login user
 export const login = async (req, res) => {
     try {
-        const {username, password} = req.body
-        const user = await User.findOne({username})
+        const {email, password} = req.body
+        const user = await User.findOne({email})
 
         if (!user){
             return res.status(404).json({

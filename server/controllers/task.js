@@ -6,11 +6,13 @@ export const createTask = async (req, res) => {
     try {
 
         const projectId =  req.params.id
-        const {nameTask} = req.body;
+        const {nameTask, status, priority} = req.body;
 
         const newTask = new Task({
             nameTask,
             project: projectId,
+            status,
+            priority,
         })
 
         await newTask.save();
@@ -23,6 +25,9 @@ export const createTask = async (req, res) => {
         })
     } catch (error) {
         console.log(error)
+        res.status(400).json({
+            message: "Не удалось создать задачу"
+        })
     }
 }
 
@@ -36,7 +41,10 @@ export const getTask = async (req, res) => {
             message: "Задача успешно открыта"
         })
     } catch (error){
-
+        console.log(error)
+        res.status(400).json({
+            message: "Не удалось открыть задачу"
+        })
     }
 
 }
@@ -44,8 +52,9 @@ export const getTask = async (req, res) => {
 // Delete Task by ID
 export const deleteTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.idTask)
-        await Project.findOneAndUpdate({tasks: req.params.idTask}, {
+        const idTask = req.params.idTask
+        const task = await Task.findByIdAndDelete(idTask)
+        await Project.findOneAndUpdate({tasks: idTask}, {
             $pull: {
                 tasks: req.params.idTask
             }
@@ -53,7 +62,23 @@ export const deleteTask = async (req, res) => {
         res.json({message: "Задача успешно удалёна"})
     } catch (error){
         res.status(400).json({
-            message: "Ошибка при удалении задачи"
+            message: "Не удалось удалить задачу"
+        })
+    }
+}
+
+// Updata Task by ID
+export const updateTask = async (req, res) => {
+    try {
+      const { nameTask } = req.body;
+      const idTask = req.params.idTask;
+      const task = await Task.findById(idTask);
+      task.nameTask = nameTask;
+      res.status(200).json({message:"Задача успешно изменена"})
+      await task.save();
+    } catch (error){
+        res.status(400).json({
+            message: "Не удалось изменить задачу",
         })
     }
 }

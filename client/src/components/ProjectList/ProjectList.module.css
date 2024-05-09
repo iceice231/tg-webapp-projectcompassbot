@@ -12,6 +12,7 @@
 
 .projectList__wrapper {
     padding-top: 20px;
+    position: relative;
 }
 
 .btnBox {
@@ -41,4 +42,19 @@
     color: #fff;
     display: flex;
     align-items: center;
+}
+
+.group-btn-filter {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.btn-clear {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6e6e6e;
 }

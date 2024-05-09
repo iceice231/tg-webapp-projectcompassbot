@@ -1,0 +1,37 @@
+.project-page_wrapper {
+  margin: 0 10px;
+
+  .task-title {
+    margin: 10px 0;
+    font-family: NotoSansBold;
+    font-size: 24px;
+  }
+
+  .group-btn-task {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+
+    .btn__create-task {
+      background-color: #44d8ff;
+      border: none;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #fff;
+      padding: 5px 20px;
+      font-family: 'NotoSansBold';
+    }
+
+    .btn__filter-task {
+      background-color: #44d8ff;
+      border: none;
+      border-radius: 5px;
+      padding: 4px;
+
+      font-size: 25px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+  }
+}

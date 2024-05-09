@@ -1,31 +1,79 @@
-import { Link } from 'react-router-dom'
-import './AuthorizationForm.css'
+import {Link, useNavigate} from 'react-router-dom'
+import styles from  './AuthorizationForm.module.scss'
 
 import Logo from '../../assets/images/logoPCB.png'
 import '../../assets/fonts/fonts.module.css'
 
-
+import { Input } from 'antd';
+import axios from "axios";
+import {useRef} from "react";
 
 
 function AuthorizationForm() {
+
+    const navigate = useNavigate()
+    const inputEmail = useRef("")
+    const inputPassword = useRef("")
+    const inputKeyOrganization = useRef("")
+
+    const apiUrl = process.env.REACT_APP_BASE_URL
+
+    function loginUser() {
+        console.log(apiUrl)
+        axios.post(`${apiUrl}/api/auth/login`, {
+            password: inputPassword.current.input.value,
+            email: inputEmail.current.input.value,
+        })
+            .then(function (response) {
+                localStorage.setItem('token', response.data.token)
+
+                if(localStorage.getItem('token')) {
+                    navigate('/projects')
+                 }
+
+                console.log(localStorage.getItem('token'))
+                console.log(response)
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+    }
+
     return (
       <>
-      <div className="authorization">
-        <img src={Logo} alt='logo'></img>
-        <h2>Вход в аккаунт</h2>
+      <div className={styles["login"]}>
+          <div className={styles["login__top"]}>
+              <img src={Logo} alt='logo'></img>
+              <h1>Войти в аккаунт</h1>
+          </div>
         <form>
-            <label>Логин</label>
-            <input placeholder='Электронная почта или телефон'  type='text'></input>
-            <label>Пароль</label>
-            <input placeholder='Пароль'  type='text'></input>
-            <label>Ключ организации</label>
-            <input placeholder='Ключ'  type='text'></input>
-            <button className='btn-submit' type='submit'>Войти</button>
+            <div className={styles["input__container"]}>
+                <label className={styles["form-label"]}>Email</label>
+                <Input
+                    className={styles["form-input"]}
+                    placeholder="example@gmail.com"
+                    ref={inputEmail}/>
+            </div>
+            <div className={styles["input__container"]}>
+                <label className={styles["form-label"]}>Пароль</label>
+                <Input
+                    className={styles["form-input"]}
+                    placeholder="********"
+                    ref={inputPassword}/>
+            </div>
+            <div className={styles["input__container"]}>
+                <label className={styles["form-label"]}>Ключ организации</label>
+                <Input
+                    className={styles["form-input"]}
+                    placeholder="e21pslf1"
+                    ref={inputKeyOrganization}/>
+            </div>
+            <Link onClick={loginUser} className={styles["login-button"]}  type="primary">Войти</Link>
+            <div className={styles["login__footer"]}>
+                <h5 className={styles["login__footer-title"]}>Нет аккаунта?</h5>
+                <Link className={styles["login__footer-sign"]}  to='/registration'>Зарегистрироваться</Link>
+            </div>
         </form>
-        <div className="authorization_footer">
-          <h5>Нет аккаунта?</h5>
-          <Link to='/registration'>Зарегистрироваться</Link>
-        </div>
       </div>
       </>
     );

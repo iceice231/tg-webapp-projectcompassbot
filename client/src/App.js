@@ -24,7 +24,6 @@ function App() {
     tg.ready();
     const initData = tg.initDataUnsafe;
     console.log(initData.username)
-    alert(initData.username)
     setUser(initData.username)
     navigate("/login")
   }, [])

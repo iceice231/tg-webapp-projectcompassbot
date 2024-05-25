@@ -7,11 +7,12 @@ import '../../assets/fonts/fonts.module.css'
 import { Input } from 'antd';
 import axios from "axios";
 import {useRef} from "react";
+import useUser from './../../App'
 
 
 function AuthorizationForm(props) {
-    const {user} = props
-
+    const user = useUser()
+    const {username} = props
     const navigate = useNavigate()
     const inputEmail = useRef("")
     const inputPassword = useRef("")
@@ -49,7 +50,7 @@ function AuthorizationForm(props) {
           <div className={styles["login__top"]}>
               <img src={Logo} alt='logo'></img>
               <h1>Войти в аккаунт</h1>
-              <h1>dssda{user}</h1>
+              <h1>dssda{username}</h1>
           </div>
         <form>
             <div className={styles["input__container"]}>

@@ -23,8 +23,7 @@ function App() {
   useEffect(() => {
     tg.ready();
     const initData = tg.initDataUnsafe;
-    setUser(initData?.user?.username)
-    console.log(initData)
+    setUser(initData.username)
     navigate("/login")
   }, [])
 

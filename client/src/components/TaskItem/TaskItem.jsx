@@ -4,10 +4,12 @@ import {AiOutlineBars} from "react-icons/ai";
 import {MdDelete} from "react-icons/md";
 import {FaArrowDown} from "react-icons/fa";
 import {useEffect, useState} from "react";
+import axios from "axios";
+import {Link} from "react-router-dom";
 
 function TaskItem(props) {
 
-    const {taskData} = props
+    const {taskData, projectId, setErrorDeleteTask, position} = props
     const [isStatusStyle, setStatusStyle] = useState("")
     const [isPriorityStyle, setIsPriorityStyle] = useState("")
     const [isActive, setIsActive] = useState(false)
@@ -30,6 +32,21 @@ function TaskItem(props) {
         }
     }, [])
 
+    const deleteTask= () => {
+        if(position == "Рукводящая должность"){
+            axios.delete(`http://localhost:3001/api/project/${projectId}/task/${taskData._id}`,{
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+        } else {
+            setErrorDeleteTask(true)
+            setTimeout(function () {
+                setErrorDeleteTask(false)
+            }, 3000)
+        }
+    }
+
     return (
         <>
             <div className={!isActive ? styles["task-item-close__wrapper"] : styles["task-item-open_wrapper"] }>
@@ -41,8 +58,8 @@ function TaskItem(props) {
                         </div>
                         <h2 className={styles["task-name"]}>{taskData.nameTask}</h2>
                         <div className={styles["task-item__footer"]}>
-                            <button className={styles["btn-detail"]}><AiOutlineBars className={styles["btn__icon"]}/>Подробнее</button>
-                            <button  className={styles["btn-delete"]}><MdDelete className={styles["btn__icon"]}/>Удалить</button>
+                            <Link to={`/projects/${projectId}/task/${taskData._id}`} className={styles["btn-detail"]}><AiOutlineBars className={styles["btn__icon"]}/>Подробнее</Link>
+                            <button onClick={deleteTask} className={styles["btn-delete"]}><MdDelete className={styles["btn__icon"]}/>Удалить</button>
                         </div>
                     </div>
                     <button className={styles["arrow-down"]} onClick={() => {setIsActive(!isActive)}}><FaArrowDown /></button>

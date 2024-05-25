@@ -6,7 +6,7 @@ import axios from "axios";
 
 import { LuSettings2 } from "react-icons/lu";
 import {useEffect, useState} from 'react';
-import {ConfigProvider, Modal} from "antd";
+import {Alert, ConfigProvider, Modal} from "antd";
 import ModalCreateProject from "../ModalCreateProject/ModalCreateProject";
 import ModalFilterProjects from "../ModalFilterProjects/ModalFilterProjects";
 import {IoCloseCircleOutline} from "react-icons/io5";
@@ -18,6 +18,11 @@ function ProjectList() {
   const [isClear, setIsClear] = useState(false)
   const [isModalCreateProjectOpen, setIsModalCreateProjectOpen] = useState(false);
   const [isModalFilterProjects, setIsModalFilterProjects] = useState(false);
+  const [isPosition, setIsPosition] = useState(undefined)
+
+  const [isErrorCreateProject, setIsErrorCreateProject] = useState(false)
+  const [isErrorDeleteProject, setIsErrorDeleteProject] = useState(false)
+
   const apiUrl = process.env.REACT_APP_BASE_URL
 
   useEffect(() => {
@@ -27,10 +32,11 @@ function ProjectList() {
             'Authorization': 'Bearer ' + localStorage.getItem('token')
           }
         })
-        .then( ( response ) => {
-          (setData(response.data.projects))
-    } )
-  }, [isClear]);
+        .then((response) => {
+          setData(response.data.projects)
+          setIsPosition(response.data.namePosition)
+        } )
+  }, []);
 
   const showModalFilterProjects = () => {
       setIsModalFilterProjects(true);
@@ -46,7 +52,15 @@ function ProjectList() {
   };
 
   const showModalCreateProject = () => {
-      setIsModalCreateProjectOpen(true);
+      if(isPosition == "Рукводящая должность"){
+          setIsModalCreateProjectOpen(true);
+      } else {
+          setIsErrorCreateProject(true)
+          setTimeout(function () {
+              setIsErrorCreateProject(false)
+          }, 3000)
+      }
+
   };
   const handleOkCreateProject = () => {
       setIsModalCreateProjectOpen(false);
@@ -58,6 +72,12 @@ function ProjectList() {
     return (
         <>
             <div className={styles.projectList__wrapper}>
+                {isErrorCreateProject ?
+                    <Alert className={styles["alert-error"]} message="У вам нет прав, чтобы добавить проект" type="error" />
+                : null}
+                {isErrorDeleteProject ?
+                    <Alert className={styles["alert-error"]} message="У вас не прав, чтобы удалить проект" type="error" />
+                    : null}
                 <ConfigProvider
                     theme={{
                         components: {
@@ -81,6 +101,7 @@ function ProjectList() {
                                 <ModalCreateProject closeOkModal={handleOkCreateProject}
                                                     closeCancelModal={handleCancelCreateProject}></ModalCreateProject>
                             </Modal>
+
                             <div className={styles["group-btn-filter"]}>
                                 {isClear ? <button onClick={handleClearFilter} className={styles["btn-clear"]}>Очистить<IoCloseCircleOutline/></button> : null}
                                 <button onClick={showModalFilterProjects} className={styles.btnFilter}>
@@ -106,6 +127,8 @@ function ProjectList() {
                                 projectId={project._id}
                                 nameProject={project.nameProject}
                                 status = {project.status}
+                                namePosition={isPosition}
+                                errorDeleteProject={setIsErrorDeleteProject}
                             />)) : null}
                     </div>
                 </ConfigProvider>

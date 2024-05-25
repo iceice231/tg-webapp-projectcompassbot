@@ -4,7 +4,7 @@ import TaskItem from "../TaskItem/TaskItem";
 
 function BlockTasks(props) {
 
-    const {taskData} = props
+    const {taskData, projectId, setErrorDeleteTask, position} = props
 
 
 
@@ -12,9 +12,15 @@ function BlockTasks(props) {
         <>
             <div className={styles["block-tasks"]}>
                 <div className={styles["block-tasks__wrapper"]}>
-                    { taskData ? taskData.map((task) => (
-                        <TaskItem key={task._id} taskData={task}></TaskItem>
-                    )) : null
+                    { Array.isArray(taskData) ? taskData.map((task) => (
+                        <TaskItem
+                            setErrorDeleteTask={setErrorDeleteTask}
+                            key={task._id}
+                            taskData={task}
+                            projectId={projectId}>
+                            position={position}
+                        </TaskItem>
+                    )) : <TaskItem key={taskData._id} taskData={taskData} projectId={projectId}></TaskItem>
                     }
 
                 </div>

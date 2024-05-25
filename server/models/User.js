@@ -37,10 +37,6 @@ const UserSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Position",
         },
-        avatarURL: {
-            type: String,
-            default: '',
-        },
         tasks: [
             {
                 type: mongoose.Schema.Types.ObjectId,

@@ -1,0 +1,20 @@
+.form-filter-projects__item {
+  margin-top: 10px;
+  font-family: 'NotoSansRegular';
+  width: 100%;
+
+  .form-filter-projects__item-input {
+    width: 100%;
+  }
+}
+
+.modal-filter-projects__wrapper-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-filter-projects__title {
+  font-size: 20px;
+}

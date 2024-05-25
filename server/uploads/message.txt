@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            //double lambda = 0.016;
+            //double sigma = 2;
+            //double m = 60;
+            //var csv = new StringBuilder();
+
+
+            //for (int i = 0; i < 2000; i++)
+            //{
+            //    //Console.WriteLine($"Случайное число {i + 1}: {exponentialModel(lambda)}");
+            //    //Console.WriteLine($"Случайное число {i + 1}: {GaussModel(sigma, m)}");
+            //    csv.AppendLine($"0;{GaussModel(sigma, m)}");
+            //}
+            //string filePath = "output.csv";
+            //using (StreamWriter writer = new StreamWriter(filePath))
+            //{
+            //    // Запись заголовка (если нужен)
+            //    writer.WriteLine("Exp;Gauss");
+            //    writer.WriteLine(csv.ToString());
+            //}
+            Test();
+        }
+        static readonly Random random = new Random();
+        static readonly Random random1 = new Random(DateTime.Now.Millisecond+1000);
+
+        static double exponentialModel(double lambda)
+        {
+            double x = random.NextDouble();
+            return -(1 / lambda) * Math.Log(x);
+        }
+        static double GaussModel(double sigma, double m)
+        {
+            double pi = Math.PI;
+            double x = random.NextDouble();
+            double x1 = random1.NextDouble();
+            double first = Math.Cos(2 * pi * x);
+            double second = Math.Sqrt(-2 * Math.Log(x1));
+            return (sigma*first*second)+m;
+        }
+        public static void Test()
+        {
+            StringBuilder str = new StringBuilder();
+            double y1;
+            double y2 = 0;
+            for (int i = 0; i < 1000; i++)
+            {
+                if (i % 2 == 0)
+                {
+                    y2 = gen_n();
+                }
+                else
+                {
+                    y1 = gen_n();
+                    str.AppendLine(y1 + ";" + y2);
+                }
+            }
+            StringBuilder header = new StringBuilder();
+            header.AppendLine("y\';y\"");
+            header.AppendLine(str.ToString());
+            File.WriteAllText("output.csv", header.ToString());
+        }
+        static double c0 = 0.895, c1 = 0.210, c2 = 0.571, c3 = 1.553;
+        static double M = 20;
+        static double q0 = GaussModel(1, 0), q1 = GaussModel(1, 0), q2 = GaussModel(1, 0), q3 = GaussModel(1, 0);
+        public static double gen_n()
+        {
+            double res = c0 * q0 + c1 * q1 + c2 * q2 + c3 * q3 + M;
+            q0 = q1;
+            q1 = q2;
+            q2 = q3;
+            q3 = GaussModel(1, 0);
+            return res;
+        }
+        static void writeCsv()
+        {
+
+        }
+    }
+}

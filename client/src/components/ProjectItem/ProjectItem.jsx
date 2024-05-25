@@ -8,6 +8,7 @@ import { AiOutlineBars } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import axios from "axios";
 import {Link} from "react-router-dom";
+import {Alert} from "antd";
 
 
 
@@ -15,7 +16,7 @@ import {Link} from "react-router-dom";
 function ProjectItem(props) {
     const [isActive, setActive] = useState(false);
     const [isStatusStyle, setStatusStyle] = useState("")
-    const {nameProject, projectId, status} = props
+    const {nameProject, projectId, status, namePosition, errorDeleteProject} = props
 
     useEffect(() => {
         if(status === "завершен") {
@@ -29,11 +30,19 @@ function ProjectItem(props) {
 
 
     const deleteProject = () => {
-        axios.delete(`http://localhost:3001/api/project/${projectId}`,{
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
-            }
-        })
+        if(namePosition == "Рукводящая должность"){
+            axios.delete(`http://localhost:3001/api/project/${projectId}`,{
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+        } else {
+            errorDeleteProject(true)
+            setTimeout(function () {
+                errorDeleteProject(false)
+            }, 3000)
+        }
+
     }
 
 

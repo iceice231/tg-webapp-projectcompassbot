@@ -38,7 +38,7 @@
     border-radius: 5px;
     padding: 4px;
 
-   font-size: 25px;
+    font-size: 25px;
     color: #fff;
     display: flex;
     align-items: center;
@@ -57,4 +57,12 @@
     align-items: center;
     gap: 5px;
     color: #6e6e6e;
+}
+
+.alert-error {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
 }

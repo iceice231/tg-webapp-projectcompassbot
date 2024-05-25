@@ -5,13 +5,14 @@ import {checkAuth} from "../utils/checkAuth.js";
 import {
     allProject,
     createOrganization,
-    createProject,
+    createProject, createReportType,
     deleteProject, findProjects,
     getProjectById,
     updateProject
 } from "../controllers/project.js";
-import {createTask, deleteTask, getTask, updateTask} from "../controllers/task.js";
+import {createTask, deleteTask, findTasks, getTask, updateTask, uploadFilesTechnical} from "../controllers/task.js";
 import multer from "multer";
+import {createComment, getComments} from "../controllers/comment.js";
 
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -23,17 +24,16 @@ const storageConfig = multer.diskStorage({
 })
 
 const router = new Router();
-// const upload = multer({ dest: 'uploads/' })
-// ,upload.single("isFile")
+
 // Create Project
 router.post('/create', checkAuth, multer({storage: storageConfig}).single("isFile"),createProject);
 router.post('/create/org', createOrganization);
 // Create Task for Project
-router.post('/:id/task/create', checkAuth, createTask);
+router.post('/:id/task/create', checkAuth, multer({storage: storageConfig}).single("isFile"),createTask);
 // Get one Task by ID
 router.get('/:id/task/:idTask', checkAuth, getTask);
 // Update Task by ID
-router.put('/:id/task/:idTask', checkAuth, updateTask);
+router.post('/task/:idTask/update', checkAuth, updateTask);
 // Get all projects
 router.get('/all', checkAuth,allProject);
 // Get one project by ID
@@ -42,8 +42,13 @@ router.get('/:id', checkAuth, getProjectById);
 router.delete('/:id', checkAuth, deleteProject);
 router.delete("/:id/task/:idTask", checkAuth, deleteTask)
 // Update project by ID
-router.put('/:id', checkAuth, updateProject);
+router.post('/update/:id', checkAuth, updateProject);
 // Find projects
 router.post('/find', checkAuth, findProjects)
+router.post('/:id/task/find', checkAuth, findTasks)
+router.post('/:id/task/:idTask/file/upload', checkAuth, multer({storage: storageConfig}).single("isFile"), uploadFilesTechnical)
+router.post('/task/:idTask/comment/create', checkAuth, multer({storage: storageConfig}).single("isFile"), createComment)
+router.get('/task/:idTask/comment/all', checkAuth, getComments)
+router.post('/report/create', createReportType)
 
 export default router;

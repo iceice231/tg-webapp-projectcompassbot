@@ -1,0 +1,38 @@
+.page-reports__wrapper {
+  margin: 10px 10px;
+  .page-reports__title {
+    font-family: 'NotoSansRegular';
+    font-size: 20px;
+  }
+  .page-reports__top {
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btnFilter {
+    background-color: #44d8ff;
+    border: none;
+    border-radius: 5px;
+    padding: 4px;
+
+    font-size: 25px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.pageReports__group-btn-filter {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  .btn-clear {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6e6e6e;
+  }
+}

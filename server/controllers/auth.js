@@ -3,15 +3,16 @@ import Organization from "../models/Organization.js";
 
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken"
+import Task from "../models/Task.js";
+import Position from "../models/Position.js";
 
 export const JWT_SECRET = "secret"
 
 // Register user
 export const register = async (req, res) => {
     try {
-        const {fullName, email, password, keyOrganization} = req.body;
-        console.log(keyOrganization)
-        // Checking for the existence of this username
+        const {fullName, email, password, keyOrganization, position, keyDirector} = req.body;
+
         const isEmail = await User.findOne({email})
         if (isEmail) {
             return res.status(402).json({
@@ -19,18 +20,29 @@ export const register = async (req, res) => {
             })
         }
 
-        // Password encryption
+        console.log(keyDirector)
+
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(password, salt);
 
-        // Finding an organization by key
+        let positionId;
+
         const organizationId = await Organization.findOne({key: keyOrganization})
+
+        if (keyDirector == organizationId.keyDirector){
+            positionId = await Position.findOne({namePosition: "Рукводящая должность"})
+        } else {
+            positionId = await Position.findOne({namePosition: "Исполняющая должность"})
+        }
+
+        console.log(positionId)
 
         const newUser = new User({
             fullName,
             email,
             password: hash,
             organization: organizationId._id,
+            position: positionId._id
         })
 
         await newUser.save();
@@ -81,6 +93,33 @@ export const login = async (req, res) => {
     } catch (error) {}
 }
 
+export const updateUser = async (req, res) => {
+    try {
+        const {email, fullName, birthday, address, phone} = req.body
+        const user = await User.findByIdAndUpdate(req.userId, {
+            fullName: fullName,
+            email: email,
+            birthday: birthday,
+            address: address,
+            phone: phone
+        },
+            {
+                new: true
+            })
+
+        if (!user){
+            return res.status(404).json({
+                message: "Не удалось обновить данные"
+            })
+        }
+
+        res.json({
+            user,
+            message: "Вы успешно изменили данные"
+        })
+    } catch (error) {}
+}
+
 // Information user
 export const getMe = async (req, res) => {
     try {
@@ -92,16 +131,40 @@ export const getMe = async (req, res) => {
             })
         }
 
-        const token = jwt.sign({
-                id: user._id,
-            },
-            JWT_SECRET,
-            {expiresIn: "30d"})
+        const taskIds = user.tasks;
+        const tasksPromises = await taskIds.map(taskId => Task.findById(taskId));
+        const tasks = await Promise.all(tasksPromises);
+
 
         res.json({
             user,
-            token,
+            tasks
         })
+    } catch (error) {
+        res.status(403).json({
+            message: "Нет доступа"
+        })
+    }
+}
+
+export const createPosition = async (req, res) => {
+    try {
+        const {namePosition} = req.body
+        const newPosition = new Position({
+            namePosition: namePosition
+        })
+
+        await newPosition.save();
+    } catch (error) {
+        res.status(403).json({
+            message: "Нет доступа"
+        })
+    }
+}
+
+export const getPosition = async (req, res) => {
+    try {
+
     } catch (error) {
         res.status(403).json({
             message: "Нет доступа"

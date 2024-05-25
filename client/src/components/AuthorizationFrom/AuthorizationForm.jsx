@@ -9,7 +9,8 @@ import axios from "axios";
 import {useRef} from "react";
 
 
-function AuthorizationForm() {
+function AuthorizationForm(props) {
+    const {user} = props
 
     const navigate = useNavigate()
     const inputEmail = useRef("")
@@ -23,6 +24,9 @@ function AuthorizationForm() {
         axios.post(`${apiUrl}/api/auth/login`, {
             password: inputPassword.current.input.value,
             email: inputEmail.current.input.value,
+        }, {
+            method: "post",
+            withCredentials: false
         })
             .then(function (response) {
                 localStorage.setItem('token', response.data.token)
@@ -45,6 +49,7 @@ function AuthorizationForm() {
           <div className={styles["login__top"]}>
               <img src={Logo} alt='logo'></img>
               <h1>Войти в аккаунт</h1>
+              <h1>{user}</h1>
           </div>
         <form>
             <div className={styles["input__container"]}>
@@ -60,13 +65,6 @@ function AuthorizationForm() {
                     className={styles["form-input"]}
                     placeholder="********"
                     ref={inputPassword}/>
-            </div>
-            <div className={styles["input__container"]}>
-                <label className={styles["form-label"]}>Ключ организации</label>
-                <Input
-                    className={styles["form-input"]}
-                    placeholder="e21pslf1"
-                    ref={inputKeyOrganization}/>
             </div>
             <Link onClick={loginUser} className={styles["login-button"]}  type="primary">Войти</Link>
             <div className={styles["login__footer"]}>

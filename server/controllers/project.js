@@ -3,6 +3,9 @@ import Organization from "../models/Organization.js";
 import Project from "../models/Project.js";
 import Task from "../models/Task.js";
 import File from "../models/File.js";
+import Position from "../models/Position.js";
+import TypeReport from "../models/TypeReport.js";
+import Comment from "../models/Comment.js";
 
 
 // Create project
@@ -15,37 +18,50 @@ export const createProject = async (req, res) => {
             })
         }
 
-        const {nameProject,dateStart, dateEnd, budget, status, description} = req.body;
+        const {nameProject,dateStart, dateEnd, budget, status, description, responsible} = req.body;
+        if(req.file){
+            const newFile = new File({
+                nameFile: req.file.originalname,
+                urlPath: req.file.path
+            })
 
-        const newFile = new File({
-            nameFile: req.file.originalname,
-            urlPath: req.file.path
-        })
+            await newFile.save();
+        }
 
-        await newFile.save();
         const file = await File.findOne({nameFile: req.file.originalname})
 
+        const userResponsible = await User.findOne({fullName: responsible})
 
-        const newProject = new Project({
-            nameProject,
-            dateStart,
-            dateEnd,
-            budget,
-            status,
-            description,
-            organization: user.organization,
-            files: [file._id]
-        })
+        let newProject;
+        const position = await Position.findById(user.position)
+        if(position.namePosition == "Рукводящая должность"){
+            newProject = new Project({
+                nameProject,
+                dateStart,
+                dateEnd,
+                budget,
+                status,
+                description,
+                organization: user.organization,
+                files: [file._id],
+                responsible: [userResponsible._id]
+            })
+            await newProject.save();
+            await Organization.findByIdAndUpdate(user.organization, {
+                $push: {projects: newProject},
+            })
+            res.json({
+                message: "Проект успешно создан",
+                // newProject
+            });
+        } else {
+            res.json({
+                message: "У вас нет доступа, чтобы создать проект"
+            })
+        }
 
-        await newProject.save();
-        await Organization.findByIdAndUpdate(user.organization, {
-            $push: {projects: newProject},
-        })
 
-        res.json({
-            message: "Проект успешно создан",
-            // newProject
-        });
+
     } catch (error) {
         console.log(error)
     }
@@ -60,8 +76,11 @@ export const allProject = async (req, res) => {
             })
         }
         const projects = await Project.find({organization: user.organization})
+        const position = await Position.findById(user.position)
+        const namePosition = position.namePosition
         res.json({
-            projects
+            projects,
+            namePosition
         })
     } catch (error){
 
@@ -86,7 +105,8 @@ export const createOrganization = async (req, res) => {
 export const getProjectById = async (req, res) => {
     try {
         const project = await Project.findById(req.params.id)
-
+        const user = await User.findById(req.userId)
+        console.log(user)
         const filesIds = project.files
         const filesPromises = await filesIds.map(fileId => File.findById(fileId))
         const files = await Promise.all(filesPromises)
@@ -95,7 +115,12 @@ export const getProjectById = async (req, res) => {
         const tasksPromises = await taskIds.map(taskId => Task.findById(taskId));
         const tasks = await Promise.all(tasksPromises);
 
-        res.status(200).json({project, tasks, files})
+        const userResponsible = await User.findById(project.responsible)
+
+        const position = await Position.findById(user.position)
+        const namePosition = position.namePosition
+
+        res.status(200).json({project, tasks, files, userResponsible, namePosition})
     } catch (error){
         res.status(400).json({
             message: "Ошибка при поиске проекта"
@@ -111,7 +136,47 @@ export const deleteProject = async (req, res) => {
                 projects: req.params.id
             }
         })
+
+        let tasks = await Task.find({project: req.params.id})
+        if (!Array.isArray(tasks)) {
+            tasks = [];
+        }
+        tasks.map(async (taskItem) => {
+            await Task.findByIdAndDelete(taskItem._id)
+            let comment = await Comment.find({task: taskItem._id})
+            if (!Array.isArray(comment)) {
+                comment = [];
+            }
+            comment.map(async(commentItem) => {
+                await Comment.findByIdAndDelete(commentItem._id)
+            })
+            let users = await User.find({tasks: taskItem._id})
+            if (!Array.isArray(users)) {
+                users = [];
+            }
+            users.map(async(userItem) => {
+                await User.findByIdAndUpdate(userItem._id, {
+                    $pull: {
+                        tasks: taskItem._id
+                    }
+                })
+            })
+        })
         res.json({message: "Проект успешно удалён"})
+    } catch (error){
+        res.status(400).json({
+            message: "Ошибка при поиске проекта"
+        })
+    }
+}
+
+export const createReportType = async (req, res) => {
+    try {
+        const {nameTypeReport} = req.body
+        const newTypeReport = new TypeReport({
+            nameTypeReport: nameTypeReport
+        })
+        await newTypeReport.save()
     } catch (error){
         res.status(400).json({
             message: "Ошибка при поиске проекта"
@@ -125,9 +190,9 @@ export const findProjects = async (req, res) => {
         const user = await User.findById(req.userId)
         let projects;
 
-        if(nameProject != undefined && status == undefined){
+        if(nameProject !== undefined && status === undefined){
             projects = await Project.findOne({nameProject: nameProject, organization: user.organization})
-        } else if (nameProject == undefined && status != undefined) {
+        } else if (nameProject === undefined && status !== undefined) {
             projects = await Project.find({status: status, organization: user.organization})
         } else {
             projects = await Project.find({nameProject: nameProject, status: status, organization: user.organization})
@@ -148,15 +213,50 @@ export const findProjects = async (req, res) => {
 
 export const updateProject = async (req, res) => {
     try {
-        const { nameProject, budget } = req.body
-        const project = await Project.findById(req.params.id)
-        project.nameProject = nameProject
-        project.budget = budget
-        res.status(200).json({message:"Проект изменён"})
+        const { nameProject, budget, dateStart, dateEnd, status, description, responsible } = req.body
+
+        let newFile;
+        let file;
+        let fileSearch
+
+        if(req.file) {
+            fileSearch = await File.findOne({nameFile: req.file.originalname})
+        }
+
+        if(!fileSearch){
+            newFile = new File({
+                nameFile: req.file.originalname,
+                urlPath: req.file.path
+            })
+            await newFile.save();
+        }
+
+        if(newFile != undefined){
+            file = await File.findOne({nameFile: req.file.originalname})
+        }
+
+        const userResponsible = await User.findOne({fullName: responsible})
+
+        const project = await Project.findByIdAndUpdate({_id: req.params.id},
+            {
+                nameProject: nameProject,
+                budget: budget,
+                status: status,
+                dateStart: dateStart,
+                dateEnd: dateEnd,
+                description: description,
+                files: file != undefined ? [file._id] : [],
+                responsible: userResponsible._id
+            },
+            {
+                new: true
+            })
+
         await project.save();
+        res.status(200).json({message:"Проект изменён"})
     } catch (error){
         res.status(400).json({
-            message: "Ошибка"
+            message: "Ошибка в изменении проекта",
         })
     }
 }

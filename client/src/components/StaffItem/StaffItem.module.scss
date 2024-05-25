@@ -1,0 +1,19 @@
+.staff-user__link {
+  text-decoration: none;
+}
+
+.staff-item {
+  background-color: #fff;
+  border-radius: 10px;
+  font-family: 'NotoSansRegular';
+  color: #262626;
+  .staff-item__wrapper {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .staff-name {
+      font-size: 18px;
+    }
+  }
+}

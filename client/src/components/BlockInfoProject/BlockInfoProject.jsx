@@ -1,15 +1,19 @@
 import styles from './BlockInfoProject.module.scss'
 import '../../assets/fonts/fonts.module.css'
-import {Space} from "antd";
+import {Button, ConfigProvider, Modal, Space} from "antd";
 import {useEffect, useState} from "react";
+import ModalChangeProject from "../ModalChangeProject/ModalChangeProject";
 
 
 
 function BlockInfoProject(props) {
 
-    const {projectData, projectFiles} = props
+    const {projectData, projectFiles, responsible, position, setErrorChangeProject} = props
+
     const [isDateStart, setIsDateStart] = useState(null)
     const [isDateEnd, setIsDateEnd] = useState(null)
+
+    const [isModalUpdateProjectOpen, setIsModalUpdateProjectOpen] = useState(false);
 
     useEffect(() => {
         let dateStart = new Date(projectData.dateStart)
@@ -28,8 +32,35 @@ function BlockInfoProject(props) {
         }
     }, [])
 
+    const showModalUpdateProject = () => {
+        if(position == "Рукводящая должность"){
+            setIsModalUpdateProjectOpen(true);
+        } else {
+            setErrorChangeProject(true)
+            setTimeout(function () {
+                setErrorChangeProject(false)
+            }, 3000)
+        }
+
+    };
+    const handleOkUpdateProject = () => {
+        setIsModalUpdateProjectOpen(false);
+    };
+    const handleCancelUpdateProject = () => {
+        setIsModalUpdateProjectOpen(false);
+    };
+
     return (
         <>
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Button: {
+                            fontFamily: 'NotoSansRegular',
+                            colorPrimary: "#44d8ff"
+                        }
+                    }
+                }}>
             <div className={styles["block-info-project"]}>
                 <div className={styles["block-info-project__wrapper"]}>
                     <h2 className={styles["block-info-project__name-project"]}>{projectData.nameProject}</h2>
@@ -50,7 +81,7 @@ function BlockInfoProject(props) {
                         </Space>
                         <Space>
                             <p className={styles["body-info__responsible"]}>Руководитель: </p>
-                            <a href="https://t.me/PashkaD5">Иванов Иван Иванович</a>
+                            <a href="https://t.me/PashkaD5">{responsible.fullName}</a>
                         </Space>
                         <p className={styles["body-info__status"]}>Статус проекта: {projectData.status}<span></span></p>
                         <p className={styles["body-info__budget"]}>Бюджет: {projectData.budget}<span></span></p>
@@ -68,8 +99,27 @@ function BlockInfoProject(props) {
                             </Space>
                         </Space>
                     </div>
+                    <div className={styles["block-info-project__footer"]}>
+                        <Button onClick={showModalUpdateProject} type="primary" className={styles["btn-change"]}>Изменить</Button>
+                    </div>
+                    <Modal
+                        open={isModalUpdateProjectOpen}
+                        onOk={handleOkUpdateProject}
+                        onCancel={handleCancelUpdateProject}
+                        footer={(_, {OkBtn, CancelBtn}) => (
+                            <>
+                            </>)}>
+                        <ModalChangeProject
+                            closeOkModal={handleOkUpdateProject}
+                            closeCancelModal={handleCancelUpdateProject}
+                            projectData={projectData}
+                            projectFiles={projectFiles}
+                        >
+                        </ModalChangeProject>
+                    </Modal>
                 </div>
             </div>
+            </ConfigProvider>
         </>
     );
 }

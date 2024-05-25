@@ -1,0 +1,38 @@
+.report-item {
+  background-color: #fff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-family: 'NotoSansRegular';
+  .report-item__wrapper {
+    padding: 10px 15px;
+    .report-item__files {
+      margin-top: 10px;
+    }
+
+    .report-item__files-item {
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .btn-delete {
+      color: #f43535;
+      margin-top: 10px;
+      background-color: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+    }
+    .report-item__info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      .report-item__info-name {
+        font-size: 18px;
+      }
+      .report-item__info-date, .report-item__info-user, .report-item__info-type {
+        font-size: 14px;
+      }
+    }
+  }
+}

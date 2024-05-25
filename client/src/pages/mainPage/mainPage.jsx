@@ -3,7 +3,6 @@ import '../../assets/fonts/fonts.module.css'
 
 import Header from '../../components/Header/Header.jsx'
 import ProjectList from '../../components/ProjectList/ProjectList.jsx';
-import ProjectPage from "../ProjectPage/ProjectPage";
 
 function mainPage() {
     

@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 function Header() {
     const [isActive, setActive] = useState(false);
 
+    const userId = localStorage.getItem("token")
 
     return (
       <>
@@ -28,13 +29,14 @@ function Header() {
                 <nav className={styles.navOpen}>
                     <div className={styles.sections}>
                         <h5 className={styles.subtitle}>Организация</h5>
-                        <Link className={styles.nav__link} to='/'><FaProjectDiagram className={styles.navIcon}/>Проекты</Link>
-                        <Link className={styles.nav__link} to='/'><BsFillPeopleFill className={styles.navIcon}/>Сотрудники</Link>
+                        <Link className={styles.nav__link} to='/projects'><FaProjectDiagram className={styles.navIcon}/>Проекты</Link>
+                        <Link className={styles.nav__link} to='/reports'><FaProjectDiagram className={styles.navIcon}/>Отчеты</Link>
+                        <Link className={styles.nav__link} to='/staff'><BsFillPeopleFill className={styles.navIcon}/>Сотрудники</Link>
                     </div>
                     <div className={styles.sections}>
                         <h5 className={styles.subtitle}>Пользователь</h5>
-                        <Link className={styles.nav__link} to="/"><FaUserCircle className={styles.navIcon}/>Профиль</Link>
-                        <Link className={styles.nav__link} to="/"><IoNotifications className={styles.navIcon}/>Уведомления</Link>
+                        <Link className={styles.nav__link} to={`/profile`}><FaUserCircle className={styles.navIcon}/>Профиль</Link>
+                        <Link className={styles.nav__link} to="/notification"><IoNotifications className={styles.navIcon}/>Уведомления</Link>
                     </div>
                 </nav>
             </div>

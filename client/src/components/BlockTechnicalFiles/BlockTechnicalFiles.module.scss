@@ -1,0 +1,19 @@
+.block-technical-files {
+  background-color: #fff;
+  margin-top: 10px;
+  border-radius: 10px;
+  font-family: 'NotoSansRegular';
+  .block-technical-files__wrapper {
+    padding: 10px 15px;
+    .block-technical-files__title {
+        font-size: 20px;
+    }
+    .block-technical-files__files {
+      font-size: 14px;
+      margin: 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+  }
+}

@@ -14,11 +14,11 @@ const TaskSchema = new mongoose.Schema(
             type: String,
             default: "В разработке"
         },
-        dataStart: {
+        dateStart: {
             type: Date,
             default: Date.now()
         },
-        dataEnd: {
+        dateEnd: {
             type: Date,
             default: Date.now()
         },
@@ -26,10 +26,12 @@ const TaskSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
-        comment: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Comment"
-        },
+        comment: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Comment"
+            }
+        ],
         project: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Project"
@@ -37,7 +39,17 @@ const TaskSchema = new mongoose.Schema(
         responsible: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
-        }]
+        }],
+        filesDocuments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "File"
+        }],
+        filesTechnical: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "File"
+            }
+        ]
 
     },
     {timestamps: true},

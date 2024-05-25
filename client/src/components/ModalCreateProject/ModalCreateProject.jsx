@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import styles from './ModalCreateProject.module.scss'
 import { UploadOutlined } from '@ant-design/icons';
 import {Button, ConfigProvider, DatePicker, Input, InputNumber, Select, Space, Upload} from "antd";
@@ -10,10 +10,12 @@ function ModalCreateProject(props) {
     const [selectedDateStart, setSelectedDateStart] = useState(null);
     const [isDateEnd, setIsDateEnd] = useState(null)
     const [isNameProject, setIsNameProject] = useState(null);
+    const statusSelect = useRef()
     const [isBudget, setIsBudget] = useState(null);
-    const [isStatus, setIsStatus] = useState(null);
+    const [isStatus, setIsStatus] = useState("");
     const [isDescription, setIsDescription ] = useState(null)
     const [isFile, setIsFile] = useState(null)
+    const [isResponsible, setIsResponsible] = useState(undefined)
 
     const fd = new FormData()
 
@@ -31,12 +33,16 @@ function ModalCreateProject(props) {
         setIsNameProject(event.target.value)
     }
 
+    const handleResponsibleChange = (event) => {
+        setIsResponsible(event.target.value)
+    }
+
     const handleBudgetChange = (value) => {
         setIsBudget(value)
     }
 
-    const handleStatusChange = (value) => {
-        setIsStatus(value)
+    const handleStatusChange = (event) => {
+       setIsStatus(event)
     }
 
     const handleDescriptionChange = (event) => {
@@ -45,7 +51,6 @@ function ModalCreateProject(props) {
 
     const handleFileChange = (file) => {
         setIsFile(file.file.originFileObj);
-        console.log(file.file.originFileObj)
     }
 
     function createProject() {
@@ -56,6 +61,7 @@ function ModalCreateProject(props) {
             budget: isBudget,
             status: isStatus,
             description: isDescription,
+            responsible: isResponsible
         }
 
         fd.append('isFile', isFile);
@@ -77,6 +83,7 @@ function ModalCreateProject(props) {
                 fd.delete("budget")
                 fd.delete("status")
                 fd.delete("description")
+                fd.delete("responsible")
                 console.log(response)
             })
             .catch(function(error) {
@@ -107,6 +114,10 @@ function ModalCreateProject(props) {
                             Upload: {
                                 colorPrimary: '#44d8ff',
                                 actionsColor: '#44d8ff',
+                            },
+                            Button: {
+                                fontFamily: 'NotoSansRegular',
+                                colorPrimary: "#44d8ff"
                             }
                         }
                     }}>
@@ -125,15 +136,19 @@ function ModalCreateProject(props) {
                             <DatePicker onChange={handleDateEndChange}  colorBorder="#fff" className={styles["form-create-project__item-input"]} placeholder={['Установите дату']}/>
                         </Space>
                         <Space className={styles["form-create-project__item"]} direction="vertical">
+                            <label>Ответственный</label>
+                            <Input onChange={handleResponsibleChange} className={styles["form-create-project__item-input"]}></Input>
+                        </Space>
+                        <Space className={styles["form-create-project__item"]} direction="vertical">
                             <label>Бюджет</label>
                             <InputNumber onChange={handleBudgetChange} className={styles["form-create-project__item-input"]} addonAfter="₽"/>
                         </Space>
                         <Space className={styles["form-create-project__item"]}>
                             <label>Статус</label>
                             <Select
-                                onChange={handleStatusChange}
+                                ref={statusSelect}
+                                onChange={(event) => handleStatusChange(event)}
                                 className={styles["form-create-project__item-select]"]}
-                                defaultValue="В разработке"
                                 style={{width: 170}}
                                 options={[
                                     {

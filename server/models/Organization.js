@@ -12,6 +12,11 @@ const OrganizationSchema = new mongoose.Schema(
             require: true,
             unique: true,
         },
+        keyDirector: {
+            type: String,
+            require: true,
+            unique: true
+        },
         personal: [
             {
                 type: mongoose.Schema.Types.ObjectId,

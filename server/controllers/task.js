@@ -1,24 +1,46 @@
 import Project from "../models/Project.js";
 import Task from "../models/Task.js";
+import File from "../models/File.js";
+import User from "../models/User.js";
+import Position from "../models/Position.js";
+import Comment from "../models/Comment.js";
 
 // Create Task
 export const createTask = async (req, res) => {
     try {
 
         const projectId =  req.params.id
-        const {nameTask, status, priority} = req.body;
+        const {nameTask, dateStart, dateEnd, description,status, priority, responsible} = req.body;
+
+        const newFile = new File({
+            nameFile: req.file.originalname,
+            urlPath: req.file.path
+        })
+        await newFile.save();
+        const filesDocuments = await File.findOne({nameFile: req.file.originalname})
+
+        const userResponsible = await User.findOne({fullName: responsible})
 
         const newTask = new Task({
             nameTask,
+            description,
+            dateStart,
+            dateEnd,
             project: projectId,
             status,
             priority,
+            filesDocuments: [filesDocuments._id],
+            responsible: [userResponsible._id]
         })
 
         await newTask.save();
         await Project.findByIdAndUpdate(projectId, {
             $push: {tasks: newTask},
         })
+        await User.findByIdAndUpdate(userResponsible._id, {
+            $push: {tasks: newTask}
+        })
+
 
         res.json({
             message: "Задача успешно создана",
@@ -31,19 +53,99 @@ export const createTask = async (req, res) => {
     }
 }
 
+export const uploadFilesTechnical = async (req, res) => {
+    try{
+
+        const newFile = new File({
+            nameFile: req.file.originalname,
+            urlPath: req.file.path
+        })
+        await newFile.save();
+        const filesTechnical = await File.findOne({nameFile: req.file.originalname})
+
+        const taskId = req.params.idTask
+        const task = await Task.findByIdAndUpdate(taskId, {
+            filesTechnical: [filesTechnical._id]
+        })
+        await task.save()
+        res.status(200).json({
+            message: "Файлы успешно загружены"
+        })
+
+    } catch (error){
+
+    }
+}
+
 // Get one Task by ID
 export const getTask = async (req, res) => {
     try{
         const taskId = req.params.idTask;
         const task = await Task.findById(taskId)
+        const user = await User.findById(req.userId)
+
+        const filesDocumentsIds = task.filesDocuments
+        const filesDocumentsPromises = await filesDocumentsIds.map(fileId => File.findById(fileId))
+        const filesDocuments = await Promise.all(filesDocumentsPromises)
+
+        const filesTechnicalIds = task.filesTechnical
+        const filesTechnicalPromises = await filesTechnicalIds.map(fileId => File.findById(fileId))
+        const filesTechnical = await Promise.all(filesTechnicalPromises)
+
+        const commentsIds = task.comment
+        const commentsPromises = await commentsIds.map(commentId => File.findById(commentId))
+        const comments = await Promise.all(commentsPromises)
+
+        const userResponsible = await User.findById(task.responsible)
+
+        const position = await Position.findById(user.position)
+        const namePosition = position.namePosition
+
         res.status(200).json({
             task,
+            filesDocuments,
+            filesTechnical,
+            comments,
+            userResponsible,
+            namePosition,
             message: "Задача успешно открыта"
         })
     } catch (error){
         console.log(error)
         res.status(400).json({
             message: "Не удалось открыть задачу"
+        })
+    }
+
+}
+
+export const findTasks = async (req, res) => {
+    try{
+        const projectId = req.params.id
+        const {nameTask, status, priority} = req.body
+
+        console.log(nameTask, status, priority)
+        let tasks;
+
+        if(nameTask != undefined && status == undefined && priority == undefined) {
+            tasks = await Task.findOne({nameTask: nameTask, project: projectId})
+        } else if(status !== undefined && nameTask === undefined && priority === undefined) {
+            tasks = await Task.find({status: status, project: projectId})
+        } else if(priority !== undefined && nameTask === undefined && status === undefined) {
+            tasks = await Task.find({priority: priority, project: projectId})
+        } else {
+            tasks = await Task.find({priority: priority, status: status, project: projectId})
+        }
+
+
+        res.status(200).json({
+            tasks,
+            message: "Задачи успешно найдены"
+        })
+    } catch (error){
+        console.log(error)
+        res.status(400).json({
+            message: "Не удалось найти задачи"
         })
     }
 
@@ -59,6 +161,25 @@ export const deleteTask = async (req, res) => {
                 tasks: req.params.idTask
             }
         })
+        await User.findByIdAndUpdate({tasks: idTask}, {
+            $pull: {
+                tasks: req.params.idTask
+            }
+        })
+
+        let comment = await Comment.find({task: idTask})
+        if (!Array.isArray(comment)) {
+            comment = [];
+        }
+        comment.map(async (commentItem) => {
+            await Comment.findByIdAndDelete(commentItem._id)
+            await Task.findOneAndUpdate({comment: commentItem._id}, {
+                $pull: {
+                    comment: commentItem._id
+                }
+            })
+        })
+
         res.json({message: "Задача успешно удалёна"})
     } catch (error){
         res.status(400).json({
@@ -67,13 +188,51 @@ export const deleteTask = async (req, res) => {
     }
 }
 
-// Updata Task by ID
+// Update Task by ID
 export const updateTask = async (req, res) => {
     try {
-      const { nameTask } = req.body;
+      const { nameTask, dateStart, dateEnd, priority, status, description, responsible } = req.body;
       const idTask = req.params.idTask;
-      const task = await Task.findById(idTask);
-      task.nameTask = nameTask;
+
+      let newFile;
+      let file;
+      let fileSearch
+
+      if(req.file) {
+          fileSearch = await File.findOne({nameFile: req.file.originalname})
+      }
+
+      if(!fileSearch){
+         newFile = new File({
+            nameFile: req.file.originalname,
+            urlPath: req.file.path
+            })
+         await newFile.save();
+      }
+
+      if(newFile != undefined){
+          file = await File.findOne({nameFile: req.file.originalname})
+      }
+
+        const userResponsible = await User.findOne({fullName: responsible})
+
+        const task = await Task.findByIdAndUpdate(idTask,
+            {
+                nameTask: nameTask,
+                status: status,
+                priority: priority,
+                dateStart: dateStart,
+                dateEnd: dateEnd,
+                description: description,
+                files: file != undefined ? [file._id] : [],
+                responsible: userResponsible._id
+            },
+            {
+                new: true
+            })
+
+        await task.save();
+
       res.status(200).json({message:"Задача успешно изменена"})
       await task.save();
     } catch (error){

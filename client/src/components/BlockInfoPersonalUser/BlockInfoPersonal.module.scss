@@ -1,0 +1,28 @@
+.block-info-user {
+  background-color: #fff;
+  border-radius: 10px;
+  font-family: NotoSansRegular;
+
+  .block-info-user__wrapper {
+    padding: 10px 15px;
+    .block-info-user__name-user {
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    .block-info-user__body {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      p {
+        font-size: 14px;
+      }
+    }
+    .btn-change-info-user {
+      margin-top: 20px;
+    }
+  }
+}
+
+.btn-delete-user {
+  margin-left: 20px;
+}

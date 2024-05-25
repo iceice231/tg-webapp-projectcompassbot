@@ -14,16 +14,16 @@ import NotificationPage from "./pages/NotificationPage/NotificationPage";
 
 const tg = window.Telegram.WebApp;
 
-const UserContext = createContext(null);
 
 function App() {
-
+  const [user, setUser] = useState()
   const navigate = useNavigate()
-  const [user, setUser] = useState(null);
   useEffect(() => {
     tg.ready();
     const initData = tg.initDataUnsafe;
-    setUser(initData.username)
+    if(initData && initData.user){
+      setUser(initData.user.username)
+    }
     navigate("/login")
   }, [])
 
@@ -43,10 +43,6 @@ function App() {
       </Routes>
     </div>
   );
-}
-
-export function useUser() {
-  return useContext(UserContext)
 }
 
 export default App;

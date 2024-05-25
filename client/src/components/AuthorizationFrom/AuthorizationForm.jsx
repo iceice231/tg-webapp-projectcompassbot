@@ -11,7 +11,6 @@ import useUser from './../../App'
 
 
 function AuthorizationForm(props) {
-    const user = useUser()
     const {username} = props
     const navigate = useNavigate()
     const inputEmail = useRef("")

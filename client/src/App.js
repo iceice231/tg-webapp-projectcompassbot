@@ -23,7 +23,8 @@ function App() {
   useEffect(() => {
     tg.ready();
     const initData = tg.initDataUnsafe;
-    console.log(initData)
+    console.log(initData.username)
+    alert(initData.username)
     setUser(initData.username)
     navigate("/login")
   }, [])

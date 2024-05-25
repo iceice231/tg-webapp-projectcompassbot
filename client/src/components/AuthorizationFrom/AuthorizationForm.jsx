@@ -49,7 +49,7 @@ function AuthorizationForm(props) {
           <div className={styles["login__top"]}>
               <img src={Logo} alt='logo'></img>
               <h1>Войти в аккаунт</h1>
-              <h1>{user}</h1>
+              <h1>dssda{user}</h1>
           </div>
         <form>
             <div className={styles["input__container"]}>

@@ -15,6 +15,7 @@ import {IoCloseCircleOutline} from "react-icons/io5";
 function ProjectList() {
 
   const [data, setData] = useState([]);
+  const [isDateUpdate, setIsDateUpdate] = useState(false)
   const [isClear, setIsClear] = useState(false)
   const [isModalCreateProjectOpen, setIsModalCreateProjectOpen] = useState(false);
   const [isModalFilterProjects, setIsModalFilterProjects] = useState(false);
@@ -36,7 +37,7 @@ function ProjectList() {
           setData(response.data.projects)
           setIsPosition(response.data.namePosition)
         } )
-  }, []);
+  }, [isDateUpdate, isClear]);
 
   const showModalFilterProjects = () => {
       setIsModalFilterProjects(true);
@@ -98,8 +99,12 @@ function ProjectList() {
                                 footer={(_, {OkBtn, CancelBtn}) => (
                                     <>
                                     </>)}>
-                                <ModalCreateProject closeOkModal={handleOkCreateProject}
-                                                    closeCancelModal={handleCancelCreateProject}></ModalCreateProject>
+                                <ModalCreateProject
+                                    closeOkModal={handleOkCreateProject}
+                                    closeCancelModal={handleCancelCreateProject}
+                                    setUpdate={setIsDateUpdate}
+                                >
+                                </ModalCreateProject>
                             </Modal>
 
                             <div className={styles["group-btn-filter"]}>
@@ -123,6 +128,7 @@ function ProjectList() {
                     <div className={styles.projectList__box}>
                         {data ? data.map((project) => (
                             <ProjectItem
+                                setDateUpdate={setIsDateUpdate}
                                 key={project._id}
                                 projectId={project._id}
                                 nameProject={project.nameProject}

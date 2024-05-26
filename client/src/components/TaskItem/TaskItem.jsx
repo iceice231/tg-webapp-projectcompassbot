@@ -9,11 +9,11 @@ import {Link} from "react-router-dom";
 
 function TaskItem(props) {
 
-    const {taskData, projectId, setErrorDeleteTask, position} = props
+    const {taskData, projectId, setErrorDeleteTask, position, setData} = props
     const [isStatusStyle, setStatusStyle] = useState("")
     const [isPriorityStyle, setIsPriorityStyle] = useState("")
     const [isActive, setIsActive] = useState(false)
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     useEffect(() => {
         if(taskData.status === "Завершен") {
             setStatusStyle("status-completed")
@@ -34,10 +34,11 @@ function TaskItem(props) {
 
     const deleteTask= () => {
         if(position == "Рукводящая должность"){
-            axios.delete(`http://localhost:3001/api/project/${projectId}/task/${taskData._id}`,{
+            axios.delete(`${apiUrl}/api/project/${projectId}/task/${taskData._id}`,{
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
+            }).then((response)=>{
             })
         } else {
             setErrorDeleteTask(true)

@@ -1,7 +1,7 @@
 import styles from './ModalFilterTasks.module.scss'
 import {Button, ConfigProvider, Input, Select, Space} from "antd";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 
 function ModalFilterProjects(props) {
@@ -10,7 +10,10 @@ function ModalFilterProjects(props) {
     const [isStatus, setIsStatus] = useState(undefined)
     const [isPriority, setIsPriority] = useState(undefined)
 
+    const [isDataTasks, setIsDataTasks] = useState([])
+
     const {setData, closeCancelModal, closeOkModal, setClear, idProject} = props
+    const apiUrl = process.env.REACT_APP_BASE_URL
 
     const handleNameTaskChange = (event) => {
         setIsNameTask(event.target.value)
@@ -31,20 +34,29 @@ function ModalFilterProjects(props) {
             priority: isPriority
         }
 
-        axios.post(`http://localhost:3001/api/project/${idProject}/task/find`, bodyRequest, {
+        axios.post(`${apiUrl}/api/project/${idProject}/task/find`, bodyRequest, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }
         })
             .then( ( response ) => {
-                (setData(response.data.tasks))
-            } )
+                if(response.data.tasks){
+                    setIsDataTasks(response.data.tasks)
+                }
 
-        if(!setData.empty){
-            closeOkModal()
-            setClear(true)
-        }
+            } )
     }
+
+    useEffect(()=>{
+        if(isDataTasks){
+            setData(isDataTasks)
+            if(!setData.empty){
+                closeOkModal()
+                setClear(true)
+            }
+        }
+
+    }, [isDataTasks])
 
     return (
         <>
@@ -63,6 +75,10 @@ function ModalFilterProjects(props) {
                             Select: {
                                 colorPrimary: '#44d8ff',
                                 fontFamily: 'NotoSansRegular',
+                            },
+                            Button: {
+                                fontFamily: 'NotoSansRegular',
+                                colorPrimary: "#44d8ff"
                             }
                         }
                     }}>
@@ -101,7 +117,7 @@ function ModalFilterProjects(props) {
                             <Select
                                 onChange={handlePriorityChange}
                                 className={styles["form-filter-projects__item-select]"]}
-                                defaultValue="В разработке"
+                                defaultValue="Низский"
                                 style={{width: 170}}
                                 options={[
                                     {

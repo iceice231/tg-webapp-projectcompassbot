@@ -11,14 +11,14 @@ function NotificationPage() {
     const [isStatusNotification, setIsStatusNotification] = useState(undefined)
     const [isStatusSuspend, setIsStatusSuspend] = useState(undefined)
     const [isDateSuspend, setIsDateSuspend] = useState(undefined)
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     const updateSettingNotification = () => {
         const bodyRequest = {
             status: isStatusNotification,
             dateStatus: isStatusSuspend,
             dateSuspend: isDateSuspend
         }
-        axios.post(`http://localhost:3001/api/notification/setting`, bodyRequest, {
+        axios.post(`${apiUrl}/api/notification/setting`, bodyRequest, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }

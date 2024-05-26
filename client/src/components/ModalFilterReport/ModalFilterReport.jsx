@@ -13,7 +13,7 @@ function ModalFilterReport(props) {
 
     const { setDataReports, closeCancelModal, closeOkModal, setClear} = props
 
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     const handleDateCompilationChange = (date, dateString) => {
         setIsDateCompilation(dateString)
     };
@@ -40,7 +40,7 @@ function ModalFilterReport(props) {
             employee: isResponsible
         }
 
-        axios.post(`http://localhost:3001/api/report/find`, bodyRequest, {
+        axios.post(`${apiUrl}/api/report/find`, bodyRequest, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }

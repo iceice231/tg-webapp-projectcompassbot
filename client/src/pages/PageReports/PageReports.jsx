@@ -18,10 +18,10 @@ function PageReports() {
     const [isUpdate, setIsUpdate] = useState(false)
     const [isDataReports, setIsDataReports] = useState([])
 
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/api/report/all`,
+        axios.get(`${apiUrl}/api/report/all`,
             {
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -29,7 +29,6 @@ function PageReports() {
             })
             .then((response) => {
                 setIsDataReports(response.data.reports)
-                console.log(response.data)
             } )
     }, [isClear, isUpdate])
 

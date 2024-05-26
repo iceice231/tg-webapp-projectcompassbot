@@ -15,6 +15,8 @@ function TaskPage() {
 
     const {id, idTask} = useParams()
 
+    const [isUpdateData, setIsUpdateData] = useState(false)
+    const apiUrl = process.env.REACT_APP_BASE_URL
     const [isDataTask, setIsDataTask] = useState([])
     const [isFilesDocuments, setIsFilesDocuments] = useState([])
     const [isFilesTechnical, setIsFilesTechnical] = useState([])
@@ -25,7 +27,7 @@ function TaskPage() {
     const [isErrorChangeTask, setIsErrorChangeTask] = useState(false)
 
     useEffect(() => {
-        axios.get(`http://localhost:3001/api/project/${id}/task/${idTask}`,
+        axios.get(`${apiUrl}/api/project/${id}/task/${idTask}`,
             {
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -33,7 +35,7 @@ function TaskPage() {
             })
             .then( ( response ) => {
                 setIsDataTask(response.data.task)
-                setIsFilesDocuments(response.data.files)
+                setIsFilesDocuments(response.data.filesDocuments)
                 setIsFilesTechnical(response.data.filesTechnical)
                 setIsCommentTask(response.data.comment)
                 setIsResponsible(response.data.userResponsible)
@@ -46,12 +48,11 @@ function TaskPage() {
                     })
                         .then((response) => {
                             setIsCommentTask(response.data.comments)
-                            console.log(response.data)
                         })
                 }
             } )
 
-    },[])
+    },[isUpdateData])
 
     return (
         <>
@@ -69,7 +70,7 @@ function TaskPage() {
                     setErrorChangeTask={setIsErrorChangeTask}
                 />
                 <BlockTechnicalFiles key={isDataTask._id} projectId={id} taskId={idTask} filesTechnical={isFilesTechnical}/>
-                <BlockCommentsTasks taskId={isDataTask._id} dataComments={isCommentTask}/>
+                <BlockCommentsTasks setUpdateData={setIsUpdateData} taskId={isDataTask._id} dataComments={isCommentTask}/>
             </div>
         </>
     );

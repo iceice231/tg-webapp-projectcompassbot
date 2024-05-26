@@ -4,34 +4,42 @@ import  styles from './RegistrationForm.module.scss'
 import axios from "axios";
 import { Link } from 'react-router-dom'
 import {ConfigProvider, Input, Select, Space} from 'antd';
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import React from "react";
 
 
 
 
 
-function RegistrationForm() {
+function RegistrationForm(props) {
+    const {username} = props
     const inputFullName = useRef("")
     const inputEmail = useRef("")
-    const inputPassword = useRef("")
+    const [isPassword, setIsPassword] = useState(undefined)
     const inputPasswordRepeat = useRef("")
     const inputKeyOrganization = useRef("")
-
+    const [isUsername, setIsUsername] = useState()
     const [isPosition, setIsPosition] = useState(undefined)
     const [isKeyDirector, setIsKeyDirector] = useState(undefined)
+    const apiUrl = process.env.REACT_APP_BASE_URL
+    useEffect(()=> {
+        if(username){
+            setIsUsername(username)
+        }
+    },[])
 
     function registrationUser() {
-        axios.post("http://localhost:3001/api/auth/register", {
+        axios.post(`${apiUrl}/api/auth/register`, {
             fullName: inputFullName.current.input.value,
-            password: inputPassword.current.input.value,
+            password: isPassword,
             email: inputEmail.current.input.value,
             keyOrganization: inputKeyOrganization.current.input.value,
             keyDirector: isKeyDirector,
-            position: isPosition
+            position: isPosition,
+            telegramUsername: isUsername
+
         })
             .then(function (response) {
-                console.log(response)
             })
             .catch(function(error) {
                 console.log(error)
@@ -41,10 +49,12 @@ function RegistrationForm() {
     const handlePositionChange = (event) => {
         setIsPosition(event)
     }
+    const handlePasswordChange = (event) => {
+        setIsPassword(event.target.value)
+    }
 
     const handleKeyDirectorChange = (event) => {
         setIsKeyDirector(event.target.value)
-        console.log(isKeyDirector)
     }
 
     return (
@@ -69,15 +79,15 @@ function RegistrationForm() {
              </div>
               <div className={styles["input__container"]}>
                   <label>Электронная почта</label>
-                  <Input className={styles["form-input"]} placeholder="example@gmail.com" ref={inputEmail}/>
+                  <Input type="email" className={styles["form-input"]} placeholder="example@gmail.com" ref={inputEmail}/>
               </div>
               <div className={styles["input__container"]}>
                   <label>Пароль</label>
-                  <Input className={styles["form-input"]} placeholder="********" ref={inputPassword}/>
+                  <Input type="password" onChange={handlePasswordChange} className={styles["form-input"]} placeholder="********"/>
               </div>
               <div className={styles["input__container"]}>
                   <label>Повторите пароль</label>
-                  <Input className={styles["form-input"]} placeholder="********" ref={inputPasswordRepeat}/>
+                  <Input type="password" className={styles["form-input"]} placeholder="********" ref={inputPasswordRepeat}/>
               </div>
               <Space direction="vertical" className={styles["input__container"]}>
                   <label>Должность</label>

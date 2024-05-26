@@ -3,7 +3,7 @@ import '../../assets/fonts/fonts.module.css'
 
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {Button, Space, Upload} from "antd";
+import {Button, ConfigProvider, Space, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 
 function BlockTechnicalFiles(props) {
@@ -14,7 +14,7 @@ function BlockTechnicalFiles(props) {
 
     const formDataFiles = new FormData()
 
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     const handleFileChange = (file) => {
         setIsFile(file.file.originFileObj);
     }
@@ -25,20 +25,32 @@ function BlockTechnicalFiles(props) {
             console.log(key, value);
         }
 
-        axios.post(`http://localhost:3001/api/project/${projectId}/task/${taskId}/file/upload`, formDataFiles, {
+        axios.post(`${apiUrl}/api/project/${projectId}/task/${taskId}/file/upload`, formDataFiles, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data"
             }
         })
             .then((response) => {
-                console.log(response.data)
             })
     }
 
     return (
         <>
             <div className={styles["block-technical-files"]}>
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Button: {
+                                fontFamily: 'NotoSansRegular',
+                                colorPrimary: "#44d8ff"
+                            },
+                            Upload: {
+                                colorPrimary: '#44d8ff',
+                                actionsColor: '#44d8ff',
+                            },
+                        }
+                    }}>
                 <div className={styles["block-technical-files__wrapper"]}>
                     <h3 className={styles["block-technical-files__title"]}>Технические файлы</h3>
                     <div className={styles["block-technical-files__files"]}>
@@ -54,6 +66,7 @@ function BlockTechnicalFiles(props) {
                     </Space>
 
                 </div>
+                    </ConfigProvider>
             </div>
         </>
     );

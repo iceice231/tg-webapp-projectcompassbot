@@ -15,6 +15,8 @@ function ModalCreateReport(props) {
 
     const fd = new FormData()
 
+    const apiUrl = process.env.REACT_APP_BASE_URL
+
     const {closeOkModal, closeCancelModal} = props
 
     const handleDateCompilationChange = (date, dateString) => {
@@ -52,7 +54,7 @@ function ModalCreateReport(props) {
             console.log(key, value);
         }
 
-        axios.post("http://localhost:3001/api/report/create", fd, {
+        axios.post(`${apiUrl}/api/report/create`, fd, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data"
@@ -64,7 +66,6 @@ function ModalCreateReport(props) {
                 fd.delete("typeReport")
                 fd.delete("employee")
                 fd.delete("isFile")
-                console.log(response)
             })
             .catch(function(error) {
                 console.log(error)
@@ -94,6 +95,10 @@ function ModalCreateReport(props) {
                             Upload: {
                                 colorPrimary: '#44d8ff',
                                 actionsColor: '#44d8ff',
+                            },
+                            Button: {
+                                fontFamily: 'NotoSansRegular',
+                                colorPrimary: "#44d8ff"
                             }
                         }
                     }}>

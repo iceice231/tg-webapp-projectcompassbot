@@ -16,12 +16,12 @@ import {Alert} from "antd";
 function ProjectItem(props) {
     const [isActive, setActive] = useState(false);
     const [isStatusStyle, setStatusStyle] = useState("")
-    const {nameProject, projectId, status, namePosition, errorDeleteProject} = props
-
+    const {nameProject, projectId, status, namePosition, errorDeleteProject, setDateUpdate} = props
+    const apiUrl = process.env.REACT_APP_BASE_URL
     useEffect(() => {
-        if(status === "завершен") {
+        if(status === "Завершен") {
             setStatusStyle("status-completed")
-        } else if (status === "в разработке") {
+        } else if (status === "В разработке") {
             setStatusStyle("status-develop")
         } else {
             setStatusStyle("status-paused")
@@ -31,10 +31,15 @@ function ProjectItem(props) {
 
     const deleteProject = () => {
         if(namePosition == "Рукводящая должность"){
-            axios.delete(`http://localhost:3001/api/project/${projectId}`,{
+            axios.delete(`${apiUrl}/api/project/${projectId}`,{
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
+            }).then((response) =>{
+                setDateUpdate(true)
+                setTimeout(function (){
+                    setDateUpdate(false)
+                }, 1000)
             })
         } else {
             errorDeleteProject(true)

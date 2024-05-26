@@ -188,15 +188,17 @@ export const findProjects = async (req, res) => {
     try {
         const {nameProject, status, userId} = req.body
         const user = await User.findById(req.userId)
-        let projects;
 
-        if(nameProject !== undefined && status === undefined){
-            projects = await Project.findOne({nameProject: nameProject, organization: user.organization})
-        } else if (nameProject === undefined && status !== undefined) {
-            projects = await Project.find({status: status, organization: user.organization})
-        } else {
-            projects = await Project.find({nameProject: nameProject, status: status, organization: user.organization})
+        const filter = {organization: user.organization}
+
+        if(nameProject != undefined){
+            filter.nameProject = nameProject
         }
+        if(status != undefined){
+            filter.status = status
+        }
+
+        const projects = await Project.find(filter)
 
 
         res.json({
@@ -218,6 +220,7 @@ export const updateProject = async (req, res) => {
         let newFile;
         let file;
         let fileSearch
+        const updateData = {}
 
         if(req.file) {
             fileSearch = await File.findOne({nameFile: req.file.originalname})
@@ -229,25 +232,38 @@ export const updateProject = async (req, res) => {
                 urlPath: req.file.path
             })
             await newFile.save();
-        }
-
-        if(newFile != undefined){
             file = await File.findOne({nameFile: req.file.originalname})
+            if(file){
+                updateData.files = [file._id]
+            }
         }
 
-        const userResponsible = await User.findOne({fullName: responsible})
 
-        const project = await Project.findByIdAndUpdate({_id: req.params.id},
-            {
-                nameProject: nameProject,
-                budget: budget,
-                status: status,
-                dateStart: dateStart,
-                dateEnd: dateEnd,
-                description: description,
-                files: file != undefined ? [file._id] : [],
-                responsible: userResponsible._id
-            },
+        if(nameProject !== undefined){
+            updateData.nameProject = nameProject
+        }
+        if(budget !== undefined){
+            updateData.budget = budget
+        }
+        if(status !== undefined){
+            updateData.status = status
+        }
+        if(dateStart !== undefined){
+            updateData.dateStart = dateStart
+        }
+        if(dateEnd !== undefined){
+            updateData.dateEnd = dateEnd
+        }
+        if(description !== undefined){
+            updateData.description = description
+        }
+        if(responsible !== undefined){
+            const userResponsible = await User.findOne({fullName: responsible})
+            updateData.responsible = userResponsible._id
+        }
+
+
+        const project = await Project.findByIdAndUpdate(req.params.id, updateData,
             {
                 new: true
             })

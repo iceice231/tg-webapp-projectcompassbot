@@ -8,21 +8,20 @@ import dayjs from 'dayjs';
 
 
 function ModalChangeProject(props) {
-    const [isDateStart, setIsDateStart] = useState(null);
-    const [isDateEnd, setIsDateEnd] = useState(null)
-    const [isNameProject, setIsNameProject] = useState("");
+    const [isDateStart, setIsDateStart] = useState(undefined);
+    const [isDateEnd, setIsDateEnd] = useState(undefined)
+    const [isNameProject, setIsNameProject] = useState(undefined);
     const [isBudget, setIsBudget] = useState(undefined);
     const [isStatus, setIsStatus] = useState(undefined);
     const [isDescription, setIsDescription ] = useState(undefined)
     const [isFile, setIsFile] = useState(undefined)
     const [isResponsible, setIsResponsible] = useState(undefined)
 
-    const dateFormat = 'YYYY-MM-DD'
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
 
     const fdUpdate = new FormData()
 
-    const {closeOkModal, closeCancelModal, projectData, projectFiles} = props
+    const {closeOkModal, closeCancelModal, projectData, projectFiles, setUpdateData} = props
 
     const handleDateStartChange = (date, dateString) => {
         setIsDateStart(dateString)
@@ -66,18 +65,14 @@ function ModalChangeProject(props) {
             description: isDescription,
             responsible: isResponsible
         }
-        if(isFile != undefined){
-            console.log(1)
-            fdUpdate.append('isFile', isFile);
-        } else {
-            fdUpdate.append('isFile', undefined);
-        }
+
+        fdUpdate.append('isFile', isFile);
         Object.entries(bodyRequest).forEach(([k, v]) => fdUpdate.append(k, v))
         for (let [key, value] of fdUpdate.entries()) {
             console.log(key, value);
         }
 
-        axios.post(`http://localhost:3001/api/project/update/${projectData._id}`, fdUpdate, {
+        axios.post(`${apiUrl}/api/project/update/${projectData._id}`, fdUpdate, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data",
@@ -92,7 +87,10 @@ function ModalChangeProject(props) {
                 fdUpdate.delete("description")
                 fdUpdate.delete("isFile")
                 fdUpdate.delete("responsible")
-                console.log(response)
+                setUpdateData(true)
+                setTimeout(function (){
+                    setUpdateData(false)
+                }, 1000)
             })
             .catch(function(error) {
                 console.log(error)
@@ -133,11 +131,11 @@ function ModalChangeProject(props) {
                         </Space>
                         <Space className={styles["form-create-project__item"]} direction="vertical">
                             <label>Дата начала</label>
-                            <DatePicker defaultValue={dayjs(projectData.dateStart, dateFormat)} format={dateFormat} onChange={handleDateStartChange} className={styles["form-create-project__item-input"]} placeholder={['Установите дату']}/>
+                            <DatePicker onChange={handleDateStartChange} className={styles["form-create-project__item-input"]} placeholder={['Установите дату']}/>
                         </Space>
                         <Space className={styles["form-create-project__item"]} direction="vertical">
                             <label>Дата конца</label>
-                            <DatePicker defaultValue={dayjs(projectData.dateEnd, dateFormat)} format={dateFormat} onChange={handleDateEndChange}  colorBorder="#fff" className={styles["form-create-project__item-input"]} placeholder={['Установите дату']}/>
+                            <DatePicker onChange={handleDateEndChange}  colorBorder="#fff" className={styles["form-create-project__item-input"]} placeholder={['Установите дату']}/>
                         </Space>
                         <Space className={styles["form-create-project__item"]} direction="vertical">
                             <label>Руководитель</label>
@@ -145,12 +143,11 @@ function ModalChangeProject(props) {
                         </Space>
                         <Space className={styles["form-create-project__item"]} direction="vertical">
                             <label>Бюджет</label>
-                            <InputNumber value={projectData.budget} onChange={handleBudgetChange} className={styles["form-create-project__item-input"]} addonAfter="₽"/>
+                            <InputNumber onChange={handleBudgetChange} className={styles["form-create-project__item-input"]} addonAfter="₽"/>
                         </Space>
                         <Space className={styles["form-create-project__item"]}>
                             <label>Статус</label>
                             <Select
-                                value={projectData.status}
                                 onChange={(event) => handleStatusChange(event)}
                                 className={styles["form-create-project__item-select]"]}
                                 style={{width: 170}}
@@ -178,12 +175,12 @@ function ModalChangeProject(props) {
                         </Space>
                         <Space className={styles["form-create-project__item"]}  direction="vertical">
                             <label>Описание проекта</label>
-                            <TextArea value={projectData.description} onChange={handleDescriptionChange} className={styles["form-create-project__item-input"]}/>
+                            <TextArea onChange={handleDescriptionChange} className={styles["form-create-project__item-input"]}/>
                         </Space>
                     </form>
                     <div className={styles["modal-create-project__wrapper-footer"]}>
                         <Button onClick={closeCancelModal}>Отмена</Button>
-                        <Button onClick={updateProject} type="primary">Создать</Button>
+                        <Button onClick={updateProject} type="primary">Сохранить</Button>
                     </div>
                 </ConfigProvider>
             </div>

@@ -22,14 +22,14 @@ function BlockInfoProject(props) {
         let dateEnd = new Date(dataTask.dateEnd)
         if (dateStart){
             let year = dateStart.getFullYear()
-            let month = dateStart.getMonth()
-            let day = dateStart.getDay()
+            let month = dateStart.getMonth() + 1
+            let day = dateStart.getDate()
             setIsDateStart(((day < 10 ? "0": "") + day + "." + (month < 10 ? "0": "") + month + "." + year).toString())
         }
         if(dateEnd){
             let year = dateEnd.getFullYear()
-            let month = dateEnd.getMonth()
-            let day = dateEnd.getDay()
+            let month = dateEnd.getMonth() + 1
+            let day = dateEnd.getDate()
             setIsDateEnd(((day < 10 ? "0": "") + day + "." + (month < 10 ? "0": "") + month + "." + year).toString())
         }
     }, [])
@@ -83,7 +83,7 @@ function BlockInfoProject(props) {
                             </Space>
                             <Space>
                                 <p className={styles["body-info__responsible"]}>Ответсвтенный: </p>
-                                <a href="https://t.me/PashkaD5">{userResponsible.fullName}</a>
+                                <a href={`https://t.me/${userResponsible.telegramUsername}`}>{userResponsible.fullName}</a>
                             </Space>
                             <p className={styles["body-info__status"]}>Статус задачи: {dataTask.status}<span></span></p>
                             <p className={styles["body-info__status"]}>Приоритет задачи: {dataTask.status}<span></span></p>

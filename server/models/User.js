@@ -43,6 +43,9 @@ const UserSchema = new mongoose.Schema(
                 ref: "Task"
             },
         ],
+        telegramUsername: {
+            type: String,
+        }
     },
     {timestamps: true},
 )

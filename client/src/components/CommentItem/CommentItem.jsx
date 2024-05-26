@@ -17,8 +17,8 @@ function CommentItem(props) {
         let dateCreateComment = new Date(dataComment.comment.createdAt)
         if (dateCreateComment) {
             let year = dateCreateComment.getFullYear()
-            let month = dateCreateComment.getMonth()
-            let day = dateCreateComment.getDay()
+            let month = dateCreateComment.getMonth() + 1
+            let day = dateCreateComment.getDate()
             setIsDateCreateComment(((day < 10 ? "0": "") + day + "." + (month < 10 ? "0": "") + month + "." + year).toString())
         }
     },[])

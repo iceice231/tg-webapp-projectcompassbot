@@ -7,11 +7,10 @@ import '../../assets/fonts/fonts.module.css'
 import { Input } from 'antd';
 import axios from "axios";
 import {useRef} from "react";
-import useUser from './../../App'
+
 
 
 function AuthorizationForm(props) {
-    const {username} = props
     const navigate = useNavigate()
     const inputEmail = useRef("")
     const inputPassword = useRef("")
@@ -34,9 +33,6 @@ function AuthorizationForm(props) {
                 if(localStorage.getItem('token')) {
                     navigate('/projects')
                  }
-
-                console.log(localStorage.getItem('token'))
-                console.log(response)
             })
             .catch(function(error) {
                 console.log(error)
@@ -49,12 +45,12 @@ function AuthorizationForm(props) {
           <div className={styles["login__top"]}>
               <img src={Logo} alt='logo'></img>
               <h1>Войти в аккаунт</h1>
-              <h1>dssda{username}</h1>
           </div>
         <form>
             <div className={styles["input__container"]}>
                 <label className={styles["form-label"]}>Email</label>
                 <Input
+                    type="email"
                     className={styles["form-input"]}
                     placeholder="example@gmail.com"
                     ref={inputEmail}/>
@@ -62,6 +58,7 @@ function AuthorizationForm(props) {
             <div className={styles["input__container"]}>
                 <label className={styles["form-label"]}>Пароль</label>
                 <Input
+                    type="password"
                     className={styles["form-input"]}
                     placeholder="********"
                     ref={inputPassword}/>

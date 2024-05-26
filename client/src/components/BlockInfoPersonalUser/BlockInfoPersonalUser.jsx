@@ -13,6 +13,8 @@ function BlockInfoPersonalUser(props) {
     const [isModalChangeDataUser, setIsModalChangeUser] = useState(false)
     const [isBirthday, setIsBirthday] = useState("")
 
+    const apiUrl = process.env.REACT_APP_BASE_URL
+
     useEffect(() => {
         let dateBirthday = new Date(dataUser.birthday)
         if (dateBirthday) {
@@ -24,7 +26,7 @@ function BlockInfoPersonalUser(props) {
     }, [dataUser])
 
     const deleteStaffUser = () => {
-            axios.delete(`http://localhost:3001/api/staff/user/delete/${dataUser._id}`,{
+            axios.delete(`${apiUrl}/api/staff/user/delete/${dataUser._id}`,{
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
@@ -54,7 +56,7 @@ function BlockInfoPersonalUser(props) {
                         <p className={styles["block-info-user__body__birthday"]}>Дата рождения: <b>{isBirthday}</b></p>
                         <p className={styles["block-info-user__body__position"]}>Должность: <b>{position}</b></p>
                         <p className={styles["block-info-user__body__telegram"]}>Telegram-ссылка:
-                            <a href={`https://t.me/PashkaD5`}>https://t.me/PashkaD5</a>
+                            <a href={`https://t.me/${dataUser.telegramUsername}`}>https://t.me/{dataUser.telegramUsername}</a>
                         </p>
                     </div>
                     <div className={styles["block-btn"]}>

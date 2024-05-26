@@ -23,7 +23,9 @@ function ProjectPage() {
     const [isFilesProject, setIsFilesProject] = useState([])
     const [isResponsible, setIsResponsible] = useState([])
     const [isPosition, setIsPosition] = useState(undefined)
+
     const [isClear, setIsClear] = useState(false)
+    const [isUpdateData, setIsUpdateData] = useState(false)
 
     const [isErrorCreateTask, setIsErrorCreateTask] = useState(false)
     const [isErrorChangeProject, setIsErrorChangeProject] = useState(false)
@@ -32,8 +34,10 @@ function ProjectPage() {
     const [isModalCreateTaskOpen, setIsModalCreateTaskOpen] = useState(false);
     const [isModalFilterTask, setIsModalFilterTask] = useState(false);
 
+    const apiUrl = process.env.REACT_APP_BASE_URL
+
     useEffect(() => {
-        axios.get(`http://localhost:3001/api/project/${id}`,
+        axios.get(`${apiUrl}/api/project/${id}`,
             {
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
@@ -46,7 +50,7 @@ function ProjectPage() {
                 setIsResponsible(response.data.userResponsible)
                 setIsPosition(response.data.namePosition)
             } )
-    },[isClear])
+    },[isClear, isUpdateData])
 
 
     const showModalFilterTask = () => {
@@ -94,6 +98,7 @@ function ProjectPage() {
                     <Alert className={styles["alert-error"]} message="У вам нет прав, чтобы удалить задачу" type="error" />
                     : null}
                 <BlockInfoProject
+                    setUpdateData={setIsUpdateData}
                     key={isDataProject._id}
                     responsible={isResponsible}
                     projectData={isDataProject}
@@ -112,6 +117,7 @@ function ProjectPage() {
                             <>
                             </>)}>
                         <ModalCreateTask
+                            setUpdateData={setIsUpdateData}
                             closeOkModal={handleOkCreateTask}
                             closeCancelModal={handleCancelCreateTask}
                             idProject={isDataProject._id}
@@ -139,7 +145,13 @@ function ProjectPage() {
                         </ModalFilterTasks>
                     </Modal>
                 </div>
-                <BlockTasks position={isPosition} setErrorDeleteTask={setIsErrorDeleteTask} taskData={isDataTask} projectId={isDataProject._id}></BlockTasks>
+                <BlockTasks
+                    position={isPosition}
+                    setErrorDeleteTask={setIsErrorDeleteTask}
+                    taskData={isDataTask}
+                    projectId={isDataProject._id}
+                    setData={setIsUpdateData}>
+                </BlockTasks>
             </div>
         </>
     );

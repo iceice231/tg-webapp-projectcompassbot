@@ -30,8 +30,8 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<AuthorizationForm username={user}/>}/>
-        <Route path="/registration" element={<RegistrationForm/>}/>
+        <Route path="/login" element={<AuthorizationForm/>}/>
+        <Route path="/registration" element={<RegistrationForm username={user}/>}/>
         <Route path="/projects" element={<MainPage/>}/>
         <Route path="/projects/:id" element={<ProjectPage/>}/>
         <Route path="/projects/:id/task/:idTask" element={<TaskPage/>}/>

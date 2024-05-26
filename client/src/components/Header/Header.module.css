@@ -21,6 +21,10 @@
     background-color: #44d8ff;
 }
 
+.nav__link {
+    text-decoration: none;
+}
+
 .header__top {
     display: flex;
     align-items: center;

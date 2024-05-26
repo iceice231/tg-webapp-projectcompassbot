@@ -16,6 +16,7 @@ function ModalChangeProject(props) {
     const [isEmail, setIsEmail] = useState(undefined)
     const [isAddress, setIsAddress] = useState(undefined)
 
+    const apiUrl = process.env.REACT_APP_BASE_URL
     const handleBirthday = (date, dateString) => {
         setIsBirthday(dateString)
     };
@@ -49,13 +50,12 @@ function ModalChangeProject(props) {
             keyDirector: isKeyDirector
         }
 
-        axios.post(`http://localhost:3001/api/staff/user/update/${dataUser._id}`, bodyRequest, {
+        axios.post(`${apiUrl}/api/staff/user/update/${dataUser._id}`, bodyRequest, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }
         })
             .then(function (response) {
-                console.log(response.data)
             })
             .catch(function(error) {
                 console.log(error)

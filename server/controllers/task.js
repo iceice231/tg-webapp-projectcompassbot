@@ -123,21 +123,21 @@ export const findTasks = async (req, res) => {
     try{
         const projectId = req.params.id
         const {nameTask, status, priority} = req.body
+        console.log(req.body)
+        const filter = {project: projectId}
 
-        console.log(nameTask, status, priority)
-        let tasks;
-
-        if(nameTask != undefined && status == undefined && priority == undefined) {
-            tasks = await Task.findOne({nameTask: nameTask, project: projectId})
-        } else if(status !== undefined && nameTask === undefined && priority === undefined) {
-            tasks = await Task.find({status: status, project: projectId})
-        } else if(priority !== undefined && nameTask === undefined && status === undefined) {
-            tasks = await Task.find({priority: priority, project: projectId})
-        } else {
-            tasks = await Task.find({priority: priority, status: status, project: projectId})
+        if(nameTask !== undefined){
+            filter.nameTask = nameTask
+        }
+        if(status !== undefined){
+            filter.status = status
+        }
+        if(priority !== undefined){
+            filter.priority = priority
         }
 
-
+        const tasks = await Task.find(filter)
+        console.log(tasks)
         res.status(200).json({
             tasks,
             message: "Задачи успешно найдены"

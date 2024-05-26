@@ -1,15 +1,16 @@
 import styles from './ModalFilterProjects.module.scss'
 import {Button, ConfigProvider, Input, Select, Space} from "antd";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 
 function ModalFilterProjects(props) {
-    const [dataProject, setDataProject] = useState(null)
-    const [isNameProject, setIsNameProject] = useState(null)
-    const [isStatus, setIsStatus] = useState(null)
+    const [dataProject, setDataProject] = useState([])
+    const [isNameProject, setIsNameProject] = useState(undefined)
+    const [isStatus, setIsStatus] = useState(undefined)
 
     const {setData, closeCancelModal, closeOkModal, setClear} = props
+    const apiUrl = process.env.REACT_APP_BASE_URL
 
     const handleNameProjectChange = (event) => {
         setIsNameProject(event.target.value)
@@ -26,22 +27,27 @@ function ModalFilterProjects(props) {
             status: isStatus
         }
 
-        axios.post("http://localhost:3001/api/project/find", bodyRequest, {
+        axios.post(`${apiUrl}/api/project/find`, bodyRequest, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }
         })
             .then( ( response ) => {
-                (setDataProject(response.data.projects))
+                if(response.data.projects){
+                    setDataProject(response.data.projects)
+                }
             } )
-
-        console.log(dataProject)
-        setData(dataProject)
-        if(!setData.empty){
-            closeOkModal()
-            setClear(true)
-        }
     }
+
+    useEffect(() => {
+        if(dataProject.length > 0){
+            setData(dataProject)
+            if(!setData.empty){
+                closeOkModal()
+                setClear(true)
+            }
+        }
+    }, [dataProject])
 
     return (
         <>

@@ -11,7 +11,7 @@ export const JWT_SECRET = "secret"
 // Register user
 export const register = async (req, res) => {
     try {
-        const {fullName, email, password, keyOrganization, position, keyDirector} = req.body;
+        const {fullName, email, password, keyOrganization, position, keyDirector, telegramUsername} = req.body;
 
         const isEmail = await User.findOne({email})
         if (isEmail) {
@@ -42,7 +42,8 @@ export const register = async (req, res) => {
             email,
             password: hash,
             organization: organizationId._id,
-            position: positionId._id
+            position: positionId._id,
+            telegramUsername: telegramUsername
         })
 
         await newUser.save();

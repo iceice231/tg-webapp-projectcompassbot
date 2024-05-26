@@ -10,7 +10,7 @@ function ReportItem(props) {
     const {dataReports, setUpdate} = props
 
     const [isDateCompilation, setDateCompilation] = useState(undefined)
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     useEffect(() => {
         let dateCompilation = new Date(dataReports.dateCompilation)
         if (dateCompilation){
@@ -22,7 +22,7 @@ function ReportItem(props) {
     }, [])
 
     const deleteReport = () => {
-            axios.delete(`http://localhost:3001/api/report/delete/${dataReports._id}`,{
+            axios.delete(`${apiUrl}/api/report/delete/${dataReports._id}`,{
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }

@@ -18,8 +18,9 @@ function ModalCreateProject(props) {
     const [isResponsible, setIsResponsible] = useState(undefined)
 
     const fd = new FormData()
+    const apiUrl = process.env.REACT_APP_BASE_URL
 
-    const {closeOkModal, closeCancelModal} = props
+    const {closeOkModal, closeCancelModal, setUpdate} = props
 
     const handleDateStartChange = (date, dateString) => {
         setSelectedDateStart(dateString)
@@ -70,7 +71,7 @@ function ModalCreateProject(props) {
             console.log(key, value);
         }
 
-        axios.post("http://localhost:3001/api/project/create", fd, {
+        axios.post(`${apiUrl}/api/project/create`, fd, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data"
@@ -84,7 +85,10 @@ function ModalCreateProject(props) {
                 fd.delete("status")
                 fd.delete("description")
                 fd.delete("responsible")
-                console.log(response)
+                setUpdate(true)
+                setTimeout(function (){
+                    setUpdate(false)
+                }, 1000)
             })
             .catch(function(error) {
                 console.log(error)

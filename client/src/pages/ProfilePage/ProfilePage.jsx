@@ -11,9 +11,9 @@ function ProfilePage() {
 
     const [isDataUser, setIsDataUser] = useState([])
     const [isTasks, setIsTasks] = useState([])
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     useEffect(() => {
-        axios.get(`http://localhost:3001/api/auth/profile`, {
+        axios.get(`${apiUrl}/api/auth/profile`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
             }
@@ -21,7 +21,6 @@ function ProfilePage() {
             .then((response) => {
                 setIsDataUser(response.data.user)
                 setIsTasks(response.data.tasks)
-                console.log(response.data)
             })
     }, [])
 

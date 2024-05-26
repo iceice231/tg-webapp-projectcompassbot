@@ -13,6 +13,7 @@ import {
 import {createTask, deleteTask, findTasks, getTask, updateTask, uploadFilesTechnical} from "../controllers/task.js";
 import multer from "multer";
 import {createComment, getComments} from "../controllers/comment.js";
+import req from "express/lib/request.js";
 
 const storageConfig = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -22,6 +23,16 @@ const storageConfig = multer.diskStorage({
         cb(null, file.originalname)
     }
 })
+const upload = multer({storage: storageConfig}).single("isFile")
+const checkFile = (req, res, next) => {
+    console.log(req.file)
+    if(req.file === undefined){
+        return next()
+    }
+    upload(req, res, (err) => {
+        next();
+    })
+}
 
 const router = new Router();
 
@@ -42,7 +53,7 @@ router.get('/:id', checkAuth, getProjectById);
 router.delete('/:id', checkAuth, deleteProject);
 router.delete("/:id/task/:idTask", checkAuth, deleteTask)
 // Update project by ID
-router.post('/update/:id', checkAuth, updateProject);
+router.post('/update/:id', checkAuth, checkFile, updateProject);
 // Find projects
 router.post('/find', checkAuth, findProjects)
 router.post('/:id/task/find', checkAuth, findTasks)

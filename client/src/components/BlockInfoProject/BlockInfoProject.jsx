@@ -8,7 +8,7 @@ import ModalChangeProject from "../ModalChangeProject/ModalChangeProject";
 
 function BlockInfoProject(props) {
 
-    const {projectData, projectFiles, responsible, position, setErrorChangeProject} = props
+    const {projectData, projectFiles, responsible, position, setErrorChangeProject, setUpdateData} = props
 
     const [isDateStart, setIsDateStart] = useState(null)
     const [isDateEnd, setIsDateEnd] = useState(null)
@@ -20,14 +20,14 @@ function BlockInfoProject(props) {
         let dateEnd = new Date(projectData.dateEnd)
         if (dateStart) {
             let year = dateStart.getFullYear()
-            let month = dateStart.getMonth()
-            let day = dateStart.getDay()
+            let month = dateStart.getMonth() + 1
+            let day = dateStart.getDate();
             setIsDateStart(((day < 10 ? "0": "") + day + "." + (month < 10 ? "0": "") + month + "." + year).toString())
         }
         if(dateEnd){
             let year = dateEnd.getFullYear()
-            let month = dateEnd.getMonth()
-            let day = dateEnd.getDay()
+            let month = dateEnd.getMonth() + 1
+            let day = dateEnd.getDate()
             setIsDateEnd(((day < 10 ? "0": "") + day + "." + (month < 10 ? "0": "") + month + "." + year).toString())
         }
     }, [])
@@ -81,7 +81,7 @@ function BlockInfoProject(props) {
                         </Space>
                         <Space>
                             <p className={styles["body-info__responsible"]}>Руководитель: </p>
-                            <a href="https://t.me/PashkaD5">{responsible.fullName}</a>
+                            <a href={`https://t.me/${responsible.telegramUsername}"`}>{responsible.fullName}</a>
                         </Space>
                         <p className={styles["body-info__status"]}>Статус проекта: {projectData.status}<span></span></p>
                         <p className={styles["body-info__budget"]}>Бюджет: {projectData.budget}<span></span></p>
@@ -110,6 +110,7 @@ function BlockInfoProject(props) {
                             <>
                             </>)}>
                         <ModalChangeProject
+                            setUpdateData={setUpdateData}
                             closeOkModal={handleOkUpdateProject}
                             closeCancelModal={handleCancelUpdateProject}
                             projectData={projectData}

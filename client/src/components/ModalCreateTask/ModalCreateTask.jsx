@@ -10,20 +10,16 @@ function ModalCreateTask(props) {
     const [selectedDateStart, setSelectedDateStart] = useState(null);
     const [isDateEnd, setIsDateEnd] = useState(null)
     const [isNameTask, setIsNameTask] = useState(null);
-    const [isPriority, setIsPriority] = useState("Низкий");
-    const [isStatus, setIsStatus] = useState("В разработке");
+    const [isPriority, setIsPriority] = useState("");
+    const [isStatus, setIsStatus] = useState("");
     const [isDescription, setIsDescription ] = useState(null)
     const [isFile, setIsFile] = useState(null)
     const [isResponsible, setIsResponsible] = useState(undefined)
 
-    useEffect(() => {
-
-    }, [])
-
-
+    const apiUrl = process.env.REACT_APP_BASE_URL
     const fd = new FormData()
 
-    const {closeOkModal, closeCancelModal, idProject, setUpdate} = props
+    const {closeOkModal, closeCancelModal, idProject, setUpdateData} = props
 
     const handleDateStartChange = (date, dateString) => {
         setSelectedDateStart(dateString)
@@ -74,7 +70,7 @@ function ModalCreateTask(props) {
             console.log(key, value);
         }
 
-        axios.post(`http://localhost:3001/api/project/${idProject}/task/create`, fd, {
+        axios.post(`${apiUrl}/api/project/${idProject}/task/create`, fd, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data"
@@ -88,13 +84,15 @@ function ModalCreateTask(props) {
                 fd.delete("status")
                 fd.delete("description")
                 fd.delete("responsible")
-                console.log(response)
+                setUpdateData(true)
+                setTimeout(function (){
+                    setUpdateData(false)
+                }, 1000)
             })
             .catch(function(error) {
                 console.log(error)
             })
         closeOkModal();
-        setUpdate(true)
     }
 
     return (
@@ -118,6 +116,10 @@ function ModalCreateTask(props) {
                             Upload: {
                                 colorPrimary: '#44d8ff',
                                 actionsColor: '#44d8ff',
+                            },
+                            Button: {
+                                fontFamily: 'NotoSansRegular',
+                                colorPrimary: "#44d8ff"
                             }
                         }
                     }}>

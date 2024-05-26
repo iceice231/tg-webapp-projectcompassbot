@@ -19,6 +19,7 @@ function ModalChangeTask(props) {
 
     const dateFormat = 'YYYY-MM-DD'
 
+    const apiUrl = process.env.REACT_APP_BASE_URL
 
     const fdUpdate = new FormData()
 
@@ -76,7 +77,7 @@ function ModalChangeTask(props) {
             console.log(key, value);
         }
 
-        axios.post(`http://localhost:3001/api/project/task/${taskData._id}/update`, fdUpdate, {
+        axios.post(`${apiUrl}/api/project/task/${taskData._id}/update`, fdUpdate, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('token'),
                 "Content-Type": "multipart/form-data",
@@ -91,7 +92,6 @@ function ModalChangeTask(props) {
                 fdUpdate.delete("description")
                 fdUpdate.delete("isFile")
                 fdUpdate.delete("responsible")
-                console.log(response)
             })
             .catch(function(error) {
                 console.log(error)
@@ -121,6 +121,10 @@ function ModalChangeTask(props) {
                             Upload: {
                                 colorPrimary: '#44d8ff',
                                 actionsColor: '#44d8ff',
+                            },
+                            Button: {
+                                fontFamily: 'NotoSansRegular',
+                                colorPrimary: "#44d8ff"
                             }
                         }
                     }}>
